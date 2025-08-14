@@ -8,16 +8,19 @@ TIPO int|bool
 TIPO_FUNCION TIPO|void
 DIGITO [0-9]+
 BOOL true|false
+OPERADOR "+"|"++"|"-"|"*"|"/"|"="|"=="|"||"|"&&"|"!"|"+="|"-="|"/="|"*="
+DELIMITADOR "("|")"|"{"|"}"
+RESERVADA "if"|"while"|"do"|"else"|"for"|"break"|"continue"|TIPO_FUNCION
 WS [ \t\n]+
 
 %%
-
-6{3} {printf("revivan el jiros \n");}
+{TIPO} {printf("%s tipo \n", yytext);}
+{RESERVADA} {printf("%s palabra reservada \n", yytext);}
 {DIGITO} {printf("%s numero \n", yytext);}
-{TIPO} {printf("%s palabra reservada \n", yytext);}
 {BOOL} {printf("%s booleano \n", yytext);}
 {ID}   {printf("%s nombre \n", yytext);}
-"="    {printf("%s asignacion \n", yytext);}
+{OPERADOR} {printf("%s operador \n", yytext);}
+{DELIMITADOR} {printf("%s delimitador \n", yytext);}
 ";"    {printf("%s finalizacion de linea \n", yytext);}
 {WS}
 .

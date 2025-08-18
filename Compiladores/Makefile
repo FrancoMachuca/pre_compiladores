@@ -1,4 +1,4 @@
 all:
+	bison -d parser.y
 	flex ej1.lex
-	gcc lex.yy.c -lfl
-	./a.out
+	gcc parser.tab.c lex.yy.c -o programa -lfl

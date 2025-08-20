@@ -4,11 +4,11 @@
 	void yyerror(const char *s);
 %}
 
-%token TIPO MAIN RETURN ID NUM
+%token TIPO MAIN RETURN ID DIGITO ADD SUBSTR DIV MULT EQ PA PC CA CC SCOLON
 
 %%
 
-programa: TIPO MAIN '('')' '{' listaInstrucciones '}'
+programa: TIPO MAIN PA PC CA listaInstrucciones CC
 
 
 // listaInstrucciones permite primero declaraciones y luego sentencias
@@ -17,28 +17,28 @@ listaInstrucciones: declaraciones sentencias
         ;
 
 declaraciones: /* vacio */
-             | declaraciones d ';'
+             | declaraciones d SCOLON
              ;
 
-d: TIPO ID                     
+d: TIPO ID                   
  ;
 
 
 // s puede ser asignacion o return
 
 sentencias: /* vacio */
-          | sentencias s ';'
+          | sentencias s SCOLON
           ;
 
-s: ID '=' expresion
+s: ID EQ expresion
  | RETURN
  | RETURN expresion
  ;
 
 expresion: ID
-         | NUM
-         | expresion '+' expresion
-         | expresion '*' expresion
+         | DIGITO
+         | expresion ADD expresion
+         | expresion MULT expresion
          ;  
 
 %%

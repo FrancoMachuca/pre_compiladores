@@ -3,19 +3,48 @@
 
 typedef enum
 {
-    NODO_OPERADOR,
-    NODO_ENTERO
-} Nodo_Tipo;
+    ENTERO,
+    BOOL
+}Tipo;
+
+typedef enum{
+    ID_INFO,
+    OPERADOR_INFO,
+    LITERAL_INFO
+}Tipo_Info;
+
+typedef struct Info_ID{
+    char* id;
+    void* valor;
+    Tipo tipo;
+}Info_ID;
+
+typedef struct Info_Operador{
+    char op;
+    Tipo tipo;
+}Info_Operador;
+
+typedef struct Info_Literal{
+    void* valor;
+    Tipo tipo;
+}Info_Literal;
 
 typedef struct Arbol
 {
-    void *valor;
-    Nodo_Tipo tipo_nodo;
+    union {
+        Info_ID info_id;
+        Info_Operador info_operador;
+        Info_Literal info_literal;
+    };
+    Tipo_Info tipo_info;
     struct Arbol *izq;
     struct Arbol *der;
 } Arbol;
 
-Arbol *crear_arbol(void *valor, Nodo_Tipo tipo_nodo);
+Arbol *crear_arbol_operador(char op, Tipo tipo, Tipo_Info tipo_info);
+Arbol *crear_arbol_id(char* id, Tipo tipo, Tipo_Info tipo_info);
+Arbol *crear_arbol_literal(void *valor, Tipo tipo, Tipo_Info tipo_info);
+void asignar_valor_id(Arbol* arbol, void* valor);
 void asignar_hijos(Arbol *padre, Arbol *izq, Arbol *der);
 void inorder(Arbol *arbol);
 

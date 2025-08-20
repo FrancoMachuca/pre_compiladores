@@ -58,7 +58,17 @@ extern int yydebug;
     MAIN = 259,                    /* MAIN  */
     RETURN = 260,                  /* RETURN  */
     ID = 261,                      /* ID  */
-    NUM = 262                      /* NUM  */
+    DIGITO = 262,                  /* DIGITO  */
+    ADD = 263,                     /* ADD  */
+    SUBSTR = 264,                  /* SUBSTR  */
+    DIV = 265,                     /* DIV  */
+    MULT = 266,                    /* MULT  */
+    EQ = 267,                      /* EQ  */
+    PA = 268,                      /* PA  */
+    PC = 269,                      /* PC  */
+    CA = 270,                      /* CA  */
+    CC = 271,                      /* CC  */
+    SCOLON = 272                   /* SCOLON  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif

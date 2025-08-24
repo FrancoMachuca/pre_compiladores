@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "tsa.h"
+#include "ast.h"
+#include <string.h>
 
 Arbol *crear_arbol_operador(char op, Tipo tipo, Tipo_Info tipo_info)
 {
@@ -10,19 +11,19 @@ Arbol *crear_arbol_operador(char op, Tipo tipo, Tipo_Info tipo_info)
     arbol->info_operador.tipo = tipo;
     arbol->izq = NULL;
     arbol->der = NULL;
-    
+
     return arbol;
 }
 
-Arbol *crear_arbol_id(char* id, Tipo tipo, Tipo_Info tipo_info)
+Arbol *crear_arbol_id(char *id, Tipo tipo, Tipo_Info tipo_info)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->tipo_info = tipo_info;
-    arbol->info_id.id = id;
+    arbol->info_id.id = strdup(id);
     arbol->info_id.tipo = tipo;
     arbol->izq = NULL;
     arbol->der = NULL;
-    
+
     return arbol;
 }
 
@@ -38,14 +39,14 @@ Arbol *crear_arbol_literal(void *valor, Tipo tipo, Tipo_Info tipo_info)
     return arbol;
 }
 
-void asignar_valor_id(Arbol* arbol, void* valor)
+void asignar_valor_id(Arbol *arbol, void *valor)
 {
     if (arbol->tipo_info != ID_INFO)
     {
         printf("No es tipo id");
         return;
     }
-    
+
     arbol->info_id.valor = valor;
 }
 
@@ -84,4 +85,3 @@ void inorder(Arbol *arbol)
 
     inorder(arbol->der);
 }
-

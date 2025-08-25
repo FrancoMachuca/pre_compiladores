@@ -1,6 +1,6 @@
 #ifndef SIMBOLO_H
 #define SIMBOLO_H
-#include "Compiladores/utils/enums.h"
+#include "utils/enums.h"
 
 typedef struct Simbolo
 {

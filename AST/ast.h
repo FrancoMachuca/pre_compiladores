@@ -1,6 +1,6 @@
 #ifndef AST
 #define AST
-#include "Compiladores/utils/enums.h"
+#include "utils/enums.h"
 
 typedef struct Info_ID
 {

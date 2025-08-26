@@ -3,6 +3,7 @@
 
 typedef enum
 {
+    VACIO = -1,
     ENTERO,
     BOOL
 } Tipo;
@@ -18,7 +19,10 @@ typedef enum
 {
     ID_INFO,
     OPERADOR_INFO,
-    LITERAL_INFO
+    LITERAL_INFO,
+    SENTENCIA_INFO,
+    DECLARACION_INFO,
+    INSTRUCCION_INFO
 } Tipo_Info;
 
 typedef enum

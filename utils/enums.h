@@ -7,6 +7,13 @@ typedef enum
     BOOL
 } Tipo;
 
+typedef enum 
+{
+    ENTERO,
+    BOOL,
+    VOID
+} Tipo_Funcion;
+
 typedef enum
 {
     ID_INFO,

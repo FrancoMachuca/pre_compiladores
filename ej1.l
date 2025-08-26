@@ -4,6 +4,8 @@
 #include "parser.tab.h"
 %}
 
+%option yylineno
+
 LETRA   [a-zA-Z]
 DIGITO  [0-9]
 TIPO    int|bool|void
@@ -39,5 +41,9 @@ WS      [ \t\n]+
 {WS}
 . { printf("Caracter no reconocido. \n");
     exit(1); }
+
+void yyerror(){
+	printf("%s%d\n","-> Error de sintaxis en linea: ", yylineno);
+}
 %%
 

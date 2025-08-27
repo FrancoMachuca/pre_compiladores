@@ -1,8 +1,9 @@
 %{
 	#include <stdio.h>
     #include <string.h>
+    #include "AST/ast.h"
 	int yylex(void);
-	void yyerror(const char *s);
+	void yyerror(Arbol** destino, const char *s);
     extern FILE *yyin;
 %}
 
@@ -11,6 +12,7 @@
     #include "tabla_simbolos/tabla.h"
 }
 
+%parse-param { Arbol **destino }
 
 %union{
     int num;
@@ -31,10 +33,8 @@
 
 %%
 
-programa: TIPO MAIN PA PC CA declaraciones sentencias CC { $$ = crear_arbol_nodo(PROGRAMA, $6, $7); 
-                                                            imprimir_vertical($$, "", 1); Simbolo* tabla = crearTabla(); 
-                                                            crearTablas($$, tabla);
-                                                            printTabla(tabla);} // CREAR RAIZ CON "PROGRAMA"
+programa: TIPO MAIN PA PC CA declaraciones sentencias CC { *destino = crear_arbol_nodo(PROGRAMA, $6, $7); 
+                                                            imprimir_vertical(*destino, "", 1);} // CREAR RAIZ CON "PROGRAMA"
 
 
 declaraciones: /* vacio */              { $$ = NULL; }
@@ -49,7 +49,7 @@ declaraciones: /* vacio */              { $$ = NULL; }
 
 d: TIPO ID  { 
                 Arbol* id_arbol = crear_arbol_id($2, NULL, NULL);
-                id_arbol->info_id.tipo = $1;
+                id_arbol->info->info_id.tipo = $1;
                 $$ = crear_arbol_nodo(DECLARACION, id_arbol, NULL);
                 
             }                 
@@ -85,7 +85,7 @@ expresion: ID                       {$$ = crear_arbol_id($1, NULL, NULL);}
          ;  
 
 %%
-
+/*
 int main(int argc, char **argv) {
     if (argc > 1) {
         FILE *archivo = fopen(argv[1], "r");
@@ -96,11 +96,14 @@ int main(int argc, char **argv) {
         yyin = archivo;
     }
 
-    return yyparse();
+    Arbol* arbol = NULL;
+
+    return yyparse(&arbol);
 }
+*/
 
 
-void yyerror(const char *s) {
+void yyerror(Arbol** destino, const char *s) {
     fprintf(stderr, "Error: %s\n", s);
 }
          

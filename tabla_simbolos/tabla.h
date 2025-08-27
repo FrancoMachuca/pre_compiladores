@@ -1,23 +1,22 @@
 #ifndef TS
 #define TS
 
-#include "../utils/enums.h"
-// no incluyas ast.h aquí
+#include "../AST/ast.h"
 
-// Forward declaration
-typedef struct Info_ID Info_ID;
-
-typedef struct Simbolo {
-    Info_ID* simbolo;
-    struct Simbolo* next;
+typedef struct Simbolo
+{
+    Info_Union *simbolo;
+    struct Simbolo *next;
 } Simbolo;
 
-Simbolo* crearTabla();
+Simbolo *crearTabla();
 
-void agregarSimbolo(Simbolo* tabla, Info_ID* id);
+void agregarSimbolo(Simbolo *tabla, Info_Union *info);
 
-Simbolo* buscarSimbolo(Simbolo* tabla, char* nombre);
+Simbolo *buscarSimbolo(Simbolo *tabla, char *nombre);
 
-void printTabla(Simbolo* tabla);
+void printTabla(Simbolo *tabla);
+
+void crearTablas(Arbol *arbol, Simbolo *tabla);
 
 #endif

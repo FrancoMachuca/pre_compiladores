@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "ast.h"
 #include <string.h>
+#include "../tabla_simbolos/tabla.h"
 
 Arbol *crear_arbol_operador(char op, void *valor, Arbol *izq, Arbol *der)
 {
@@ -40,34 +41,10 @@ Arbol *crear_arbol_literal(void *valor, Tipo tipo, Arbol *izq, Arbol *der)
     return arbol;
 }
 
-Arbol *crear_arbol_sentencia(char *sentencia, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
-    arbol->tipo_info = SENTENCIA_INFO;
-    arbol->info_sentencia.sentencia = strdup(sentencia);
-    arbol->izq = izq;
-    arbol->der = der;
-
-    return arbol;
-}
-
-Arbol *crear_arbol_declaracion(char *declaracion, Tipo tipo, Arbol *izq, Arbol *der)
-{
-    Arbol *arbol = malloc(sizeof(Arbol));
-    arbol->tipo_info = DECLARACION_INFO;
-    arbol->info_declaracion.declaracion = strdup(declaracion);
-    arbol->info_declaracion.tipo = tipo;
-    arbol->izq = izq;
-    arbol->der = der;
-
-    return arbol;
-}
-
-Arbol *crear_arbol_instruccion(char *instruccion, Arbol *izq, Arbol *der)
-{
-    Arbol *arbol = malloc(sizeof(Arbol));
-    arbol->tipo_info = DECLARACION_INFO;
-    arbol->info_instruccion.instruccion = strdup(instruccion);
+    arbol->tipo_info = tipo;
     arbol->izq = izq;
     arbol->der = der;
 
@@ -137,17 +114,29 @@ void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo)
         else if (arbol->info_literal.tipo == BOOL)
             printf("Lit(%s)\n", (*(int *)arbol->info_literal.valor) ? "true" : "false");
     }
-    else if (arbol->tipo_info == SENTENCIA_INFO)
+    else if (arbol->tipo_info == DECLARACION)
     {
-        printf("Sent(%s)\n", arbol->info_sentencia.sentencia);
+        printf("DECLARACION\n");
     }
-    else if (arbol->tipo_info == DECLARACION_INFO)
+    else if (arbol->tipo_info == DECLARACIONES)
     {
-        printf("Decl(%s)\n", arbol->info_declaracion.declaracion);
+        printf("DECLARACIONES\n");
     }
-    else if (arbol->tipo_info == INSTRUCCION_INFO)
+    else if (arbol->tipo_info == SENTENCIAS)
     {
-        printf("Instr(%s)\n", arbol->info_instruccion.instruccion);
+        printf("SENTENCIAS\n");
+    }
+    else if (arbol->tipo_info == PROGRAMA)
+    {
+        printf("PROGRAMA\n");
+    }
+    else if (arbol->tipo_info == RETURN_INFO)
+    {
+        printf("RETURN\n");
+    }
+    else if (arbol->tipo_info == ASIGNACION)
+    {
+        printf("ASIGNACION\n");
     }
 
     // nuevo prefijo para los hijos
@@ -169,4 +158,82 @@ void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo)
         imprimir_vertical(arbol->izq, nuevo_prefijo, (hijos == 1 && !arbol->der));
     if (arbol->der)
         imprimir_vertical(arbol->der, nuevo_prefijo, 1);
+}
+
+
+void crearTablas(Arbol* arbol, Simbolo* tabla) {
+    if (arbol == NULL)
+        return;
+
+    crearTablas(arbol->izq, tabla);
+    crearTablas(arbol->der, tabla);
+
+    if (arbol->tipo_info == DECLARACION) {
+        Arbol* id = arbol->izq;
+
+        char* nombre = id->info_id.id;
+
+        if (buscarSimbolo(tabla, nombre) == NULL) {
+            agregarSimbolo(tabla, &id->info_id);
+        } else {
+            printf("Variable %s ya declarada.\n", nombre);
+            return;
+        }
+    }
+
+
+    if (arbol->tipo_info == ASIGNACION) {
+        char* nombre = arbol->izq->info_id.id;
+
+        Simbolo* s = buscarSimbolo(tabla, nombre);
+
+        if (s == NULL) {
+            printf("Variable %s no declarada.\n", nombre);
+            return;
+        }
+
+        Tipo tipo = s->simbolo->tipo;
+
+        if (arbol->der->tipo_info == OPERADOR_INFO) {
+            Tipo t = arbol->der->info_operador.tipo;
+
+            if (tipo != t) {
+                printf("Error de tipo.\n");
+                return;
+            }
+
+        } else if (arbol->der->tipo_info == LITERAL_INFO) {
+            Tipo t = arbol->der->info_literal.tipo;
+
+            if (tipo != t) {
+                printf("Error de tipo.\n");
+                return;
+            }
+        }
+        else if (arbol->der->tipo_info == ID_INFO) {
+            char* nombre2 = arbol->der->info_id.id;
+            Simbolo* q = buscarSimbolo(tabla, nombre2);
+
+            Tipo t1 = q->simbolo->tipo;
+
+            if (tipo != t1) {
+                printf("Error de tipo.\n");
+                return;
+            }
+        }
+    }
+
+    if (arbol->tipo_info == OPERADOR_INFO) {
+        Tipo izq = arbol->izq->info_operador.tipo;
+
+        Tipo der = arbol->der->info_operador.tipo;
+
+        if (izq != der) {
+            printf("Error de tipo.\n");
+            return;
+        } else {
+            arbol->info_operador.tipo = izq;
+        }
+    
+    }
 }

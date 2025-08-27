@@ -1,6 +1,7 @@
 #ifndef AST
 #define AST
 #include "../utils/enums.h"
+#include "../tabla_simbolos/tabla.h"
 
 typedef struct Info_ID
 {
@@ -22,21 +23,10 @@ typedef struct Info_Literal
     Tipo tipo;
 } Info_Literal;
 
-typedef struct Info_Sentencia
+typedef struct Info_Nodo
 {
-    char *sentencia;
-} Info_Sentencia;
-
-typedef struct Info_Declaracion
-{
-    char *declaracion;
-    Tipo tipo;
-} Info_Declaracion;
-
-typedef struct Info_Instruccion
-{
-    char *instruccion;
-} Info_Instruccion;
+    char *nodo;
+} Info_Nodo;
 
 typedef struct Arbol
 {
@@ -45,9 +35,6 @@ typedef struct Arbol
         Info_ID info_id;
         Info_Operador info_operador;
         Info_Literal info_literal;
-        Info_Sentencia info_sentencia;
-        Info_Declaracion info_declaracion;
-        Info_Instruccion info_instruccion;
     };
     Tipo_Info tipo_info;
     struct Arbol *izq;
@@ -57,10 +44,9 @@ typedef struct Arbol
 Arbol *crear_arbol_operador(char op, void *valor, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_id(char *id, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_literal(void *valor, Tipo tipo, Arbol *izq, Arbol *der);
-Arbol *crear_arbol_sentencia(char *sentencia, Arbol *izq, Arbol *der);
-Arbol *crear_arbol_declaracion(char *declaracion, Tipo tipo, Arbol *izq, Arbol *der);
-Arbol *crear_arbol_instruccion(char *instruccion, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der);
 void inorder(Arbol *arbol);
 void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo);
+void crearTablas(Arbol* arbol, Simbolo* tabla);
 
 #endif

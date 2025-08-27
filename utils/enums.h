@@ -8,21 +8,17 @@ typedef enum
     BOOL
 } Tipo;
 
-typedef enum 
-{
-    ENTERO,
-    BOOL,
-    VOID
-} Tipo_Funcion;
-
 typedef enum
 {
     ID_INFO,
     OPERADOR_INFO,
     LITERAL_INFO,
-    SENTENCIA_INFO,
-    DECLARACION_INFO,
-    INSTRUCCION_INFO
+    DECLARACION,
+    ASIGNACION,    
+    PROGRAMA,
+    SENTENCIAS,
+    RETURN_INFO,
+    DECLARACIONES
 } Tipo_Info;
 
 typedef enum

@@ -8,6 +8,7 @@
 
 %code requires {
     #include "AST/ast.h"
+    #include "tabla_simbolos/tabla.h"
 }
 
 
@@ -19,49 +20,37 @@
 }
 
 %token MAIN RETURN EQ PA PC CA CC SCOLON
-%token <tipo> TIPO
-%token <num> DIGITO ADD SUBSTR DIV MULT 
+%token <num> DIGITO ADD MULT 
 %token <id> ID
+%token <tipo> TIPO
 
-%type <ast> expresion s sentencias d declaraciones listaInstrucciones programa
+%type <ast> expresion s sentencias d declaraciones programa
 
 %left ADD
 %left MULT
 
 %%
 
-programa: TIPO MAIN PA PC CA listaInstrucciones CC { $$ = $6; imprimir_vertical($$, "", 1);}
+programa: TIPO MAIN PA PC CA declaraciones sentencias CC { $$ = crear_arbol_nodo(PROGRAMA, $6, $7); 
+                                                            imprimir_vertical($$, "", 1); Simbolo* tabla = crearTabla(); 
+                                                            crearTablas($$, tabla);
+                                                            printTabla(tabla);} // CREAR RAIZ CON "PROGRAMA"
 
 
-// listaInstrucciones permite primero declaraciones y luego sentencias
-
-listaInstrucciones: declaraciones sentencias { $$ = crear_arbol_instruccion("INSTRUCCIONES", $1, $2); }
-        ;
-
-declaraciones: /* vacio */ { $$ = NULL; }
+declaraciones: /* vacio */              { $$ = NULL; }
              | declaraciones d SCOLON   {
                                             if($1 == NULL) {
                                                 $$ = $2;
                                             } else {
-                                                $$ = crear_arbol_declaracion("DECLARACIONES", VACIO, $1, $2);
+                                                $$ = crear_arbol_nodo(DECLARACIONES, $1, $2);
                                             }  
                                         }
              ;
 
 d: TIPO ID  { 
                 Arbol* id_arbol = crear_arbol_id($2, NULL, NULL);
-                switch($1) {
-                    case ENTERO:
-                        id_arbol->info_id.tipo = ENTERO;
-                        break;
-                    case BOOL:
-                        id_arbol->info_id.tipo = BOOL;
-                        break;
-                    default:
-                        break;
-                }
-
-                $$ = crear_arbol_declaracion("VARIABLE", id_arbol->info_id.tipo, id_arbol, NULL);
+                id_arbol->info_id.tipo = $1;
+                $$ = crear_arbol_nodo(DECLARACION, id_arbol, NULL);
                 
             }                 
  ;
@@ -74,24 +63,24 @@ sentencias: /* vacio */ { $$ = NULL; }
                                     if($1 == NULL) {
                                         $$ = $2;
                                     } else {
-                                        $$ = crear_arbol_sentencia("SENTENCIAS", $1, $2);
+                                        $$ = crear_arbol_nodo(SENTENCIAS, $1, $2);
                                     }
                                 }
           ;
 
-s: ID EQ expresion {
+s: ID EQ expresion  {
                         Arbol* id_arbol = crear_arbol_id($1, NULL, NULL);
-                        $$ = crear_arbol_sentencia("ASIGNACION", id_arbol, $3);
-                   }
- | RETURN {$$ = crear_arbol_sentencia("RETURN", NULL, NULL);}
- | RETURN expresion {$$ = crear_arbol_sentencia("RETURN", $2, NULL);}
+                        $$ = crear_arbol_nodo(ASIGNACION, id_arbol, $3);
+                    }
+ | RETURN           {$$ = crear_arbol_nodo(RETURN_INFO, NULL, NULL);}
+ | RETURN expresion {$$ = crear_arbol_nodo(RETURN_INFO, $2, NULL);}
  ;
 
-expresion: ID {$$ = crear_arbol_id($1, NULL, NULL);}
-         | DIGITO {int* valor = malloc(sizeof(int)); 
-                   *valor = $1; 
-                   $$ = crear_arbol_literal(valor, ENTERO, NULL, NULL);}
-         | expresion ADD expresion {$$ = crear_arbol_operador('+', NULL, $1, $3);}
+expresion: ID                       {$$ = crear_arbol_id($1, NULL, NULL);}
+         | DIGITO                   {int* valor = malloc(sizeof(int)); 
+                                    *valor = $1; 
+                                    $$ = crear_arbol_literal(valor, ENTERO, NULL, NULL);}                    
+         | expresion ADD expresion  {$$ = crear_arbol_operador('+', NULL, $1, $3);}
          | expresion MULT expresion {$$ = crear_arbol_operador('*', NULL, $1, $3);}
          ;  
 

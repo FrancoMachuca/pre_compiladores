@@ -1,6 +1,7 @@
 %{
 	#include <stdio.h>
     #include <string.h>
+    #include <stdbool.h>
 	int yylex(void);
 	void yyerror(const char *s);
     extern FILE *yyin;
@@ -14,6 +15,7 @@
 
 %union{
     int num;
+    bool b;
     char* id;
     Tipo tipo;
     Arbol* ast;
@@ -21,6 +23,7 @@
 
 %token MAIN RETURN EQ PA PC CA CC SCOLON
 %token <num> DIGITO ADD MULT 
+%token <b> AND OR COMP NOT VERDAD
 %token <id> ID
 %token <tipo> TIPO
 
@@ -28,6 +31,10 @@
 
 %left ADD
 %left MULT
+%left NOT
+%left AND
+%left OR
+%left COMP
 
 %%
 
@@ -76,13 +83,20 @@ s: ID EQ expresion  {
  | RETURN expresion {$$ = crear_arbol_nodo(RETURN_INFO, $2, NULL);}
  ;
 
-expresion: ID                       {$$ = crear_arbol_id($1, NULL, NULL);}
-         | DIGITO                   {int* valor = malloc(sizeof(int)); 
+expresion: ID                      {$$ = crear_arbol_id($1, NULL, NULL);}
+        | DIGITO                   {int* valor = malloc(sizeof(int)); 
                                     *valor = $1; 
-                                    $$ = crear_arbol_literal(valor, ENTERO, NULL, NULL);}                    
-         | expresion ADD expresion  {$$ = crear_arbol_operador('+', NULL, $1, $3);}
-         | expresion MULT expresion {$$ = crear_arbol_operador('*', NULL, $1, $3);}
-         ;  
+                                    $$ = crear_arbol_literal(valor, ENTERO, NULL, NULL);}
+        | VERDAD                   {bool* valor = malloc(sizeof(bool));
+                                    *valor = $1;
+                                    $$ = crear_arbol_literal(valor, BOOL, NULL, NULL);}
+        | expresion ADD expresion  {$$ = crear_arbol_operador("+", NULL, $1, $3);}
+        | expresion MULT expresion {$$ = crear_arbol_operador("*", NULL, $1, $3);}
+        | expresion AND expresion  {$$ = crear_arbol_operador("&&", NULL, $1, $3);}
+        | expresion OR expresion   {$$ = crear_arbol_operador("||", NULL, $1, $3);}
+        | expresion COMP expresion {$$ = crear_arbol_operador("==", NULL, $1, $3);}
+        | NOT expresion            {$$ = crear_arbol_operador("!", NULL, $2, NULL);}
+        ;  
 
 %%
 
@@ -97,10 +111,5 @@ int main(int argc, char **argv) {
     }
 
     return yyparse();
-}
-
-
-void yyerror(const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
 }
          

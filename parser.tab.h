@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 9 "parser.y"
+#line 10 "parser.y"
 
     #include "AST/ast.h"
     #include "tabla_simbolos/tabla.h"
@@ -72,8 +72,13 @@ extern int yydebug;
     DIGITO = 266,                  /* DIGITO  */
     ADD = 267,                     /* ADD  */
     MULT = 268,                    /* MULT  */
-    ID = 269,                      /* ID  */
-    TIPO = 270                     /* TIPO  */
+    AND = 269,                     /* AND  */
+    OR = 270,                      /* OR  */
+    COMP = 271,                    /* COMP  */
+    NOT = 272,                     /* NOT  */
+    VERDAD = 273,                  /* VERDAD  */
+    ID = 274,                      /* ID  */
+    TIPO = 275                     /* TIPO  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -82,14 +87,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "parser.y"
+#line 16 "parser.y"
 
     int num;
+    bool b;
     char* id;
     Tipo tipo;
     Arbol* ast;
 
-#line 93 "parser.tab.h"
+#line 99 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

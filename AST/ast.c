@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include "ast.h"
 #include <string.h>
+#include <stdbool.h>
 #include "../tabla_simbolos/tabla.h"
 
-Arbol *crear_arbol_operador(char op, void *valor, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_operador(char *op, void *valor, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->tipo_info = OPERADOR_INFO;
@@ -64,7 +65,7 @@ void inorder(Arbol *arbol)
     }
     else if (arbol->tipo_info == OPERADOR_INFO)
     {
-        printf("Operador: %c\n", arbol->info_operador.op);
+        printf("Operador: %s\n", arbol->info_operador.op);
     }
     else if (arbol->tipo_info == LITERAL_INFO)
     {
@@ -74,7 +75,7 @@ void inorder(Arbol *arbol)
         }
         else if (arbol->info_literal.tipo == BOOL)
         {
-            printf("Literal: %s\n", (*(int *)arbol->info_literal.valor) ? "true" : "false");
+            printf("Literal: %d\n", *(bool *)arbol->info_literal.valor);
         }
     }
 
@@ -105,14 +106,14 @@ void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo)
     }
     else if (arbol->tipo_info == OPERADOR_INFO)
     {
-        printf("Op(%c)\n", arbol->info_operador.op);
+        printf("Op(%s)\n", arbol->info_operador.op);
     }
     else if (arbol->tipo_info == LITERAL_INFO)
     {
         if (arbol->info_literal.tipo == ENTERO)
             printf("Lit(%d)\n", *(int *)arbol->info_literal.valor);
         else if (arbol->info_literal.tipo == BOOL)
-            printf("Lit(%s)\n", (*(int *)arbol->info_literal.valor) ? "true" : "false");
+            printf("Lit(%s)\n", (*(bool *)arbol->info_literal.valor) ? "true" : "false");
     }
     else if (arbol->tipo_info == DECLARACION)
     {
@@ -160,80 +161,105 @@ void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo)
         imprimir_vertical(arbol->der, nuevo_prefijo, 1);
 }
 
-
-void crearTablas(Arbol* arbol, Simbolo* tabla) {
+void crearTablas(Arbol *arbol, Simbolo *tabla)
+{
     if (arbol == NULL)
         return;
 
     crearTablas(arbol->izq, tabla);
     crearTablas(arbol->der, tabla);
 
-    if (arbol->tipo_info == DECLARACION) {
-        Arbol* id = arbol->izq;
+    if (arbol->tipo_info == DECLARACION)
+    {
+        Arbol *id = arbol->izq;
 
-        char* nombre = id->info_id.id;
+        char *nombre = id->info_id.id;
 
-        if (buscarSimbolo(tabla, nombre) == NULL) {
+        if (buscarSimbolo(tabla, nombre) == NULL)
+        {
             agregarSimbolo(tabla, &id->info_id);
-        } else {
+        }
+        else
+        {
             printf("Variable %s ya declarada.\n", nombre);
             return;
         }
     }
 
+    if (arbol->tipo_info == ASIGNACION)
+    {
+        char *nombre = arbol->izq->info_id.id;
 
-    if (arbol->tipo_info == ASIGNACION) {
-        char* nombre = arbol->izq->info_id.id;
+        Simbolo *s = buscarSimbolo(tabla, nombre);
 
-        Simbolo* s = buscarSimbolo(tabla, nombre);
-
-        if (s == NULL) {
+        if (s == NULL)
+        {
             printf("Variable %s no declarada.\n", nombre);
             return;
         }
 
         Tipo tipo = s->simbolo->tipo;
 
-        if (arbol->der->tipo_info == OPERADOR_INFO) {
-            Tipo t = arbol->der->info_operador.tipo;
+        if (arbol->tipo_info == OPERADOR_INFO)
+        {
+            Tipo izq = VACIO;
+            Tipo der = VACIO;
 
-            if (tipo != t) {
-                printf("Error de tipo.\n");
-                return;
+            if (arbol->izq != NULL)
+            {
+                switch (arbol->izq->tipo_info)
+                {
+                case OPERADOR_INFO:
+                    izq = arbol->izq->info_operador.tipo;
+                    break;
+                case LITERAL_INFO:
+                    izq = arbol->izq->info_literal.tipo;
+                    break;
+                case ID_INFO:
+                    izq = arbol->izq->info_id.tipo;
+                    break;
+                default:
+                    izq = VACIO;
+                    break;
+                }
             }
 
-        } else if (arbol->der->tipo_info == LITERAL_INFO) {
-            Tipo t = arbol->der->info_literal.tipo;
+            if (arbol->der != NULL)
+            {
+                switch (arbol->der->tipo_info)
+                {
+                case OPERADOR_INFO:
+                    der = arbol->der->info_operador.tipo;
+                    break;
+                case LITERAL_INFO:
+                    der = arbol->der->info_literal.tipo;
+                    break;
+                case ID_INFO:
+                    der = arbol->der->info_id.tipo;
+                    break;
+                default:
+                    der = VACIO;
+                    break;
+                }
+            }
 
-            if (tipo != t) {
-                printf("Error de tipo.\n");
-                return;
+            if (arbol->izq != NULL && arbol->der != NULL)
+            {
+                if (izq != der)
+                {
+                    printf("Error de tipo en operador '%s'.\n", arbol->info_operador.op);
+                    return;
+                }
+                arbol->info_operador.tipo = izq;
+            }
+            else if (arbol->izq != NULL && arbol->der == NULL)
+            {
+                arbol->info_operador.tipo = izq;
+            }
+            else
+            {
+                arbol->info_operador.tipo = VACIO;
             }
         }
-        else if (arbol->der->tipo_info == ID_INFO) {
-            char* nombre2 = arbol->der->info_id.id;
-            Simbolo* q = buscarSimbolo(tabla, nombre2);
-
-            Tipo t1 = q->simbolo->tipo;
-
-            if (tipo != t1) {
-                printf("Error de tipo.\n");
-                return;
-            }
-        }
-    }
-
-    if (arbol->tipo_info == OPERADOR_INFO) {
-        Tipo izq = arbol->izq->info_operador.tipo;
-
-        Tipo der = arbol->der->info_operador.tipo;
-
-        if (izq != der) {
-            printf("Error de tipo.\n");
-            return;
-        } else {
-            arbol->info_operador.tipo = izq;
-        }
-    
     }
 }

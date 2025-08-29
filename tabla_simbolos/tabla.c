@@ -146,18 +146,63 @@ void crearTablas(Arbol *arbol, Simbolo *tabla)
 
   if (arbol->tipo_info == OPERADOR_INFO)
   {
-    Tipo izq = arbol->izq->info->info_operador.tipo;
+    Tipo izq = VACIO;
+    Tipo der = VACIO;
 
-    Tipo der = arbol->der->info->info_operador.tipo;
-
-    if (izq != der)
+    if (arbol->izq != NULL)
     {
-      printf("Error de tipo.\n");
-      return;
+      switch (arbol->izq->tipo_info)
+      {
+      case OPERADOR_INFO:
+        izq = arbol->izq->info->info_operador.tipo;
+        break;
+      case LITERAL_INFO:
+        izq = arbol->izq->info->info_literal.tipo;
+        break;
+      case ID_INFO:
+        izq = arbol->izq->info->info_id.tipo;
+        break;
+      default:
+        izq = VACIO;
+        break;
+      }
+    }
+
+    if (arbol->der != NULL)
+    {
+      switch (arbol->der->tipo_info)
+      {
+      case OPERADOR_INFO:
+        der = arbol->der->info->info_operador.tipo;
+        break;
+      case LITERAL_INFO:
+        der = arbol->der->info->info_literal.tipo;
+        break;
+      case ID_INFO:
+        der = arbol->der->info->info_id.tipo;
+        break;
+      default:
+        der = VACIO;
+        break;
+      }
+    }
+
+    if (arbol->izq != NULL && arbol->der != NULL)
+    {
+      if (izq != der)
+      {
+        printf("Error de tipo en operador '%s'.\n", arbol->info->info_operador.op);
+        return;
+      }
+      arbol->info->info_operador.tipo = izq;
+    }
+    else if (arbol->izq != NULL && arbol->der == NULL)
+    {
+      arbol->info->info_operador.tipo = izq;
     }
     else
     {
-      arbol->info->info_operador.tipo = izq;
+      arbol->info->info_operador.tipo = VACIO;
     }
   }
 }

@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include "ast.h"
 #include <string.h>
+#include <stdbool.h>
 #include "../tabla_simbolos/tabla.h"
 
-Arbol *crear_arbol_operador(char op, void *valor, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_operador(char *op, void *valor, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->info = malloc(sizeof(Info_Union));
@@ -68,7 +69,7 @@ void inorder(Arbol *arbol)
     }
     else if (arbol->tipo_info == OPERADOR_INFO)
     {
-        printf("Operador: %c\n", arbol->info->info_operador.op);
+        printf("Operador: %s\n", arbol->info->info_operador.op);
     }
     else if (arbol->tipo_info == LITERAL_INFO)
     {
@@ -109,7 +110,7 @@ void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo)
     }
     else if (arbol->tipo_info == OPERADOR_INFO)
     {
-        printf("Op(%c)\n", arbol->info->info_operador.op);
+        printf("Op(%s)\n", arbol->info->info_operador.op);
     }
     else if (arbol->tipo_info == LITERAL_INFO)
     {

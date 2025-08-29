@@ -1,27 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "tabla_simbolos/tabla.h"
 #include "parser.tab.h"
 extern FILE *yyin;
 
-void *obtener_valor(Arbol *nodo)
+void print_valor(Tipo tipo, void *valor, const char *prefix)
 {
-    if (!nodo)
-        return NULL;
-
-    switch (nodo->tipo_info)
+    if (!valor)
     {
-    case LITERAL_INFO:
-        printf("[DEBUG] obtener_valor: literal = %d\n", *(int *)nodo->info->info_literal.valor);
-        return nodo->info->info_literal.valor;
-    case OPERADOR_INFO:
-        printf("[DEBUG] obtener_valor: operador = %d\n", *(int *)nodo->info->info_operador.valor);
-        return nodo->info->info_operador.valor;
-    case ID_INFO:
-        printf("[DEBUG] obtener_valor: id %s = %d\n", nodo->info->info_id.id, *(int *)nodo->info->info_id.valor);
-        return nodo->info->info_id.valor;
+        printf("%s(null)\n", prefix ? prefix : "");
+        return;
+    }
+
+    switch (tipo)
+    {
+    case ENTERO:
+        printf("%s%d\n", prefix ? prefix : "", *(int *)valor);
+        break;
+
+    case BOOL:
+        printf("%s%s\n", prefix ? prefix : "",
+               (*(bool *)valor) ? "true" : "false");
+        break;
+
     default:
-        return NULL;
+        printf("%s<?> (tipo desconocido)\n", prefix ? prefix : "");
+        break;
     }
 }
 
@@ -43,70 +48,90 @@ Tipo obtener_tipo(Arbol *nodo)
     }
 }
 
-void *calcular_op_suma(void *valor_izq, void *valor_der, Tipo tipo)
+void *obtener_valor(Arbol *nodo)
+{
+    if (!nodo)
+        return NULL;
+
+    Tipo tipo;
+    void *valor;
+
+    switch (nodo->tipo_info)
+    {
+    case LITERAL_INFO:
+        tipo = obtener_tipo(nodo);
+        valor = nodo->info->info_literal.valor;
+        print_valor(tipo, valor, "[INTERPRETE] obtener_valor: literal = ");
+        break;
+    case OPERADOR_INFO:
+        tipo = obtener_tipo(nodo);
+        valor = nodo->info->info_operador.valor;
+        print_valor(tipo, valor, "[INTERPRETE] obtener_valor: operador = ");
+        break;
+    case ID_INFO:
+        tipo = obtener_tipo(nodo);
+        valor = nodo->info->info_id.valor;
+        print_valor(tipo, valor, "[INTERPRETE] obtener_valor: id = ");
+        break;
+    default:
+        return NULL;
+    }
+
+    return valor;
+}
+
+void *calcular_op(char *op, void *valor_izq, void *valor_der, Tipo tipo)
 {
     switch (tipo)
     {
     case ENTERO:
-    {
-        int *result = malloc(sizeof(int));
-        *result = *(int *)valor_izq + *(int *)valor_der;
-        printf("[DEBUG] suma ENTERO: %d + %d = %d\n",
-               *(int *)valor_izq, *(int *)valor_der, *result);
-        return result;
-    }
+        printf("[INTERPRETE] calcular_op: %s con tipo %s\n", op, "Entero");
+        break;
     case BOOL:
-    {
-        int *result = malloc(sizeof(int));
-        *result = (*(int *)valor_izq != 0) && (*(int *)valor_der != 0);
-        printf("[DEBUG] suma BOOL (&&): %d && %d = %d\n",
-               *(int *)valor_izq, *(int *)valor_der, *result);
-        return result;
-    }
+        printf("[INTERPRETE] calcular_op: %s con tipo %s\n", op, "Booleano");
+        break;
     default:
-        return NULL;
+        break;
     }
-}
 
-void *calcular_op_mult(void *valor_izq, void *valor_der, Tipo tipo)
-{
-    switch (tipo)
+    if (strcmp(op, "+") == 0)
     {
-    case ENTERO:
+        int *valor = malloc(sizeof(int));
+        *valor = *(int *)valor_izq + *(int *)valor_der;
+        return valor;
+    }
+    else if (strcmp(op, "*") == 0)
     {
-        int *result = malloc(sizeof(int));
-        *result = *(int *)valor_izq * *(int *)valor_der;
-        printf("[DEBUG] mult ENTERO: %d * %d = %d\n",
-               *(int *)valor_izq, *(int *)valor_der, *result);
-        return result;
+        int *valor = malloc(sizeof(int));
+        *valor = *(int *)valor_izq * *(int *)valor_der;
+        return valor;
     }
-    case BOOL:
+    else if (strcmp(op, "&&") == 0)
     {
-        int *result = malloc(sizeof(int));
-        *result = (*(int *)valor_izq != 0) || (*(int *)valor_der != 0);
-        printf("[DEBUG] mult BOOL (||): %d || %d = %d\n",
-               *(int *)valor_izq, *(int *)valor_der, *result);
-        return result;
+        bool *valor = malloc(sizeof(bool));
+        *valor = *(bool *)valor_izq && *(bool *)valor_der;
+        return valor;
     }
-    default:
-        return NULL;
+    else if (strcmp(op, "||") == 0)
+    {
+        bool *valor = malloc(sizeof(bool));
+        *valor = *(bool *)valor_izq || *(bool *)valor_der;
+        return valor;
     }
-}
+    else if (strcmp(op, "==") == 0)
+    {
+        bool *valor = malloc(sizeof(bool));
+        *valor = *(bool *)valor_izq == *(bool *)valor_der;
+        return valor;
+    }
+    else if (strcmp(op, "!") == 0)
+    {
+        bool *valor = malloc(sizeof(bool));
+        *valor = !*(bool *)valor_izq;
+        return valor;
+    }
 
-void *calcular_op(char op, void *valor_izq, void *valor_der, Tipo tipo)
-{
-    printf("[DEBUG] calcular_op: %c con tipo %d\n", op, tipo);
-
-    switch (op)
-    {
-    case '+':
-        return calcular_op_suma(valor_izq, valor_der, tipo);
-    case '*':
-        return calcular_op_mult(valor_izq, valor_der, tipo);
-    default:
-        printf("[DEBUG] calcular_op: operador desconocido %c\n", op);
-        return NULL;
-    }
+    return NULL;
 }
 
 void interprete(Arbol *arbol)
@@ -126,16 +151,19 @@ void interprete(Arbol *arbol)
         Arbol *izq = arbol->izq;
         Arbol *der = arbol->der;
 
-        izq->info->info_id.valor = obtener_valor(der);
+        void *valor = obtener_valor(der);
+        izq->info->info_id.valor = valor;
+        Tipo tipo = obtener_tipo(izq);
 
-        printf("[DEBUG] Asignación: %s = %d\n",
-               izq->info->info_id.id,
-               *(int *)izq->info->info_id.valor);
+        printf("[INTERPRETE] Asignación: %s = ",
+               izq->info->info_id.id);
+        print_valor(tipo, valor, "");
+
         break;
     }
 
     case RETURN_INFO:
-        printf("[DEBUG] RETURN encontrado (sin implementar)\n");
+        printf("[INTERPRETE] RETURN encontrado (sin implementar)\n");
         break;
 
     case OPERADOR_INFO:
@@ -147,12 +175,15 @@ void interprete(Arbol *arbol)
         void *valor_der = obtener_valor(der);
 
         Tipo tipo = obtener_tipo(izq);
-        char op = arbol->info->info_operador.op;
+        char *op = strdup(arbol->info->info_operador.op);
 
         arbol->info->info_operador.valor = calcular_op(op, valor_izq, valor_der, tipo);
+        void *valor = arbol->info->info_operador.valor;
 
-        printf("[DEBUG] operador %c aplicado -> %d\n",
-               op, *(int *)arbol->info->info_operador.valor);
+        printf("[INTERPRETE] operador %s aplicado -> ", op);
+        print_valor(tipo, valor, "");
+
+        free(op);
         break;
     }
 

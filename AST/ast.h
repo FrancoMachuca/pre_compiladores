@@ -11,7 +11,7 @@ typedef struct Info_ID
 
 typedef struct Info_Operador
 {
-    char op;
+    char *op;
     void *valor;
     Tipo tipo;
 } Info_Operador;
@@ -42,7 +42,7 @@ typedef struct Arbol
     struct Arbol *der;
 } Arbol;
 
-Arbol *crear_arbol_operador(char op, void *valor, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_operador(char *op, void *valor, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_id(char *id, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_literal(void *valor, Tipo tipo, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der);

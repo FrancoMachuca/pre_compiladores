@@ -45,12 +45,13 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 9 "parser.y"
+#line 10 "parser.y"
 
+    #include <stdbool.h>
     #include "AST/ast.h"
-    #include "tabla_simbolos/tabla.h"
+    #include "tabla_simbolos/tabla_simbolos.h"
 
-#line 54 "parser.tab.h"
+#line 55 "parser.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -72,8 +73,13 @@ extern int yydebug;
     DIGITO = 266,                  /* DIGITO  */
     ADD = 267,                     /* ADD  */
     MULT = 268,                    /* MULT  */
-    ID = 269,                      /* ID  */
-    TIPO = 270                     /* TIPO  */
+    AND = 269,                     /* AND  */
+    OR = 270,                      /* OR  */
+    COMP = 271,                    /* COMP  */
+    NOT = 272,                     /* NOT  */
+    VERDAD = 273,                  /* VERDAD  */
+    ID = 274,                      /* ID  */
+    TIPO = 275                     /* TIPO  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -82,14 +88,15 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "parser.y"
+#line 18 "parser.y"
 
     int num;
+    bool b;
     char* id;
     Tipo tipo;
     Arbol* ast;
 
-#line 93 "parser.tab.h"
+#line 100 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -101,7 +108,7 @@ typedef union YYSTYPE YYSTYPE;
 extern YYSTYPE yylval;
 
 
-int yyparse (void);
+int yyparse (Arbol **destino);
 
 
 #endif /* !YY_YY_PARSER_TAB_H_INCLUDED  */

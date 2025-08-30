@@ -71,11 +71,12 @@
 
 	#include <stdio.h>
     #include <string.h>
+    #include "AST/ast.h"
 	int yylex(void);
-	void yyerror(const char *s);
+	void yyerror(Arbol** destino, const char *s);
     extern FILE *yyin;
 
-#line 79 "parser.tab.c"
+#line 80 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -117,15 +118,20 @@ enum yysymbol_kind_t
   YYSYMBOL_DIGITO = 11,                    /* DIGITO  */
   YYSYMBOL_ADD = 12,                       /* ADD  */
   YYSYMBOL_MULT = 13,                      /* MULT  */
-  YYSYMBOL_ID = 14,                        /* ID  */
-  YYSYMBOL_TIPO = 15,                      /* TIPO  */
-  YYSYMBOL_YYACCEPT = 16,                  /* $accept  */
-  YYSYMBOL_programa = 17,                  /* programa  */
-  YYSYMBOL_declaraciones = 18,             /* declaraciones  */
-  YYSYMBOL_d = 19,                         /* d  */
-  YYSYMBOL_sentencias = 20,                /* sentencias  */
-  YYSYMBOL_s = 21,                         /* s  */
-  YYSYMBOL_expresion = 22                  /* expresion  */
+  YYSYMBOL_AND = 14,                       /* AND  */
+  YYSYMBOL_OR = 15,                        /* OR  */
+  YYSYMBOL_COMP = 16,                      /* COMP  */
+  YYSYMBOL_NOT = 17,                       /* NOT  */
+  YYSYMBOL_VERDAD = 18,                    /* VERDAD  */
+  YYSYMBOL_ID = 19,                        /* ID  */
+  YYSYMBOL_TIPO = 20,                      /* TIPO  */
+  YYSYMBOL_YYACCEPT = 21,                  /* $accept  */
+  YYSYMBOL_programa = 22,                  /* programa  */
+  YYSYMBOL_declaraciones = 23,             /* declaraciones  */
+  YYSYMBOL_d = 24,                         /* d  */
+  YYSYMBOL_sentencias = 25,                /* sentencias  */
+  YYSYMBOL_s = 26,                         /* s  */
+  YYSYMBOL_expresion = 27                  /* expresion  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -453,19 +459,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   25
+#define YYLAST   39
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  16
+#define YYNTOKENS  21
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  7
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  14
+#define YYNRULES  19
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  28
+#define YYNSTATES  37
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   270
+#define YYMAXUTOK   275
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -506,15 +512,15 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15
+      15,    16,    17,    18,    19,    20
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    34,    34,    40,    41,    50,    61,    62,    71,    75,
-      76,    79,    80,    83,    84
+       0,    43,    43,    47,    48,    57,    68,    69,    78,    82,
+      83,    86,    87,    90,    93,    94,    95,    96,    97,    98
 };
 #endif
 
@@ -531,9 +537,9 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
 static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "MAIN", "RETURN", "EQ",
-  "PA", "PC", "CA", "CC", "SCOLON", "DIGITO", "ADD", "MULT", "ID", "TIPO",
-  "$accept", "programa", "declaraciones", "d", "sentencias", "s",
-  "expresion", YY_NULLPTR
+  "PA", "PC", "CA", "CC", "SCOLON", "DIGITO", "ADD", "MULT", "AND", "OR",
+  "COMP", "NOT", "VERDAD", "ID", "TIPO", "$accept", "programa",
+  "declaraciones", "d", "sentencias", "s", "expresion", YY_NULLPTR
 };
 
 static const char *
@@ -543,7 +549,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-21)
+#define YYPACT_NINF (-20)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -557,9 +563,10 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -13,     4,     8,     7,   -21,     9,     6,   -21,     0,     3,
-      10,    -4,   -21,   -21,    -5,   -21,    13,    11,   -21,   -21,
-      -1,    -5,   -21,    -5,    -5,    -1,    12,   -21
+     -19,     4,     8,    13,   -20,    25,    26,   -20,    16,    14,
+      27,    -4,   -20,   -20,     3,   -20,    30,    28,   -20,     3,
+     -20,   -20,    11,     3,   -20,     2,     3,     3,     3,     3,
+       3,    11,    15,     2,   -12,    23,   -20
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -568,20 +575,21 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     1,     0,     0,     3,     6,     0,
-       0,     0,     5,     4,     9,     2,     0,     0,    12,    11,
-      10,     0,     7,     0,     0,     8,    13,    14
+       0,     0,     5,     4,     9,     2,     0,     0,    12,     0,
+      13,    11,    10,     0,     7,    19,     0,     0,     0,     0,
+       0,     8,    14,    15,    16,    17,    18
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -21,   -21,   -21,   -21,   -21,   -21,   -20
+     -20,   -20,   -20,   -20,   -20,   -20,   -17
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     8,    10,    11,    17,    20
+       0,     2,     8,    10,    11,    17,    22
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -589,39 +597,42 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      14,    25,     1,    26,    27,    15,    18,     3,     4,    19,
-      16,    23,    24,     5,     7,     9,     6,    12,    21,     0,
-      13,    22,     0,     0,     0,    24
+      14,     1,    25,    29,    30,    15,    31,     3,     4,    32,
+      33,    34,    35,    36,    18,    16,    28,    29,    30,     5,
+      19,    20,    21,    26,    27,    28,    29,    30,    27,    28,
+      29,    30,     6,    12,     7,    23,     9,    13,    24,    30
 };
 
 static const yytype_int8 yycheck[] =
 {
-       4,    21,    15,    23,    24,     9,    11,     3,     0,    14,
-      14,    12,    13,     6,     8,    15,     7,    14,     5,    -1,
-      10,    10,    -1,    -1,    -1,    13
+       4,    20,    19,    15,    16,     9,    23,     3,     0,    26,
+      27,    28,    29,    30,    11,    19,    14,    15,    16,     6,
+      17,    18,    19,    12,    13,    14,    15,    16,    13,    14,
+      15,    16,     7,    19,     8,     5,    20,    10,    10,    16
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    15,    17,     3,     0,     6,     7,     8,    18,    15,
-      19,    20,    14,    10,     4,     9,    14,    21,    11,    14,
-      22,     5,    10,    12,    13,    22,    22,    22
+       0,    20,    22,     3,     0,     6,     7,     8,    23,    20,
+      24,    25,    19,    10,     4,     9,    19,    26,    11,    17,
+      18,    19,    27,     5,    10,    27,    12,    13,    14,    15,
+      16,    27,    27,    27,    27,    27,    27
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    16,    17,    18,    18,    19,    20,    20,    21,    21,
-      21,    22,    22,    22,    22
+       0,    21,    22,    23,    23,    24,    25,    25,    26,    26,
+      26,    27,    27,    27,    27,    27,    27,    27,    27,    27
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     8,     0,     3,     2,     0,     3,     3,     1,
-       2,     1,     1,     3,     3
+       2,     1,     1,     1,     3,     3,     3,     3,     3,     2
 };
 
 
@@ -650,7 +661,7 @@ enum { YYENOMEM = -2 };
       }                                                           \
     else                                                          \
       {                                                           \
-        yyerror (YY_("syntax error: cannot back up")); \
+        yyerror (destino, YY_("syntax error: cannot back up")); \
         YYERROR;                                                  \
       }                                                           \
   while (0)
@@ -683,7 +694,7 @@ do {                                                                      \
     {                                                                     \
       YYFPRINTF (stderr, "%s ", Title);                                   \
       yy_symbol_print (stderr,                                            \
-                  Kind, Value); \
+                  Kind, Value, destino); \
       YYFPRINTF (stderr, "\n");                                           \
     }                                                                     \
 } while (0)
@@ -695,10 +706,11 @@ do {                                                                      \
 
 static void
 yy_symbol_value_print (FILE *yyo,
-                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
+                       yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, Arbol **destino)
 {
   FILE *yyoutput = yyo;
   YY_USE (yyoutput);
+  YY_USE (destino);
   if (!yyvaluep)
     return;
   YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN
@@ -713,12 +725,12 @@ yy_symbol_value_print (FILE *yyo,
 
 static void
 yy_symbol_print (FILE *yyo,
-                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep)
+                 yysymbol_kind_t yykind, YYSTYPE const * const yyvaluep, Arbol **destino)
 {
   YYFPRINTF (yyo, "%s %s (",
              yykind < YYNTOKENS ? "token" : "nterm", yysymbol_name (yykind));
 
-  yy_symbol_value_print (yyo, yykind, yyvaluep);
+  yy_symbol_value_print (yyo, yykind, yyvaluep, destino);
   YYFPRINTF (yyo, ")");
 }
 
@@ -752,7 +764,7 @@ do {                                                            \
 
 static void
 yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
-                 int yyrule)
+                 int yyrule, Arbol **destino)
 {
   int yylno = yyrline[yyrule];
   int yynrhs = yyr2[yyrule];
@@ -765,7 +777,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
       YYFPRINTF (stderr, "   $%d = ", yyi + 1);
       yy_symbol_print (stderr,
                        YY_ACCESSING_SYMBOL (+yyssp[yyi + 1 - yynrhs]),
-                       &yyvsp[(yyi + 1) - (yynrhs)]);
+                       &yyvsp[(yyi + 1) - (yynrhs)], destino);
       YYFPRINTF (stderr, "\n");
     }
 }
@@ -773,7 +785,7 @@ yy_reduce_print (yy_state_t *yyssp, YYSTYPE *yyvsp,
 # define YY_REDUCE_PRINT(Rule)          \
 do {                                    \
   if (yydebug)                          \
-    yy_reduce_print (yyssp, yyvsp, Rule); \
+    yy_reduce_print (yyssp, yyvsp, Rule, destino); \
 } while (0)
 
 /* Nonzero means print parse trace.  It is left uninitialized so that
@@ -814,9 +826,10 @@ int yydebug;
 
 static void
 yydestruct (const char *yymsg,
-            yysymbol_kind_t yykind, YYSTYPE *yyvaluep)
+            yysymbol_kind_t yykind, YYSTYPE *yyvaluep, Arbol **destino)
 {
   YY_USE (yyvaluep);
+  YY_USE (destino);
   if (!yymsg)
     yymsg = "Deleting";
   YY_SYMBOL_PRINT (yymsg, yykind, yyvaluep, yylocationp);
@@ -843,7 +856,7 @@ int yynerrs;
 `----------*/
 
 int
-yyparse (void)
+yyparse (Arbol **destino)
 {
     yy_state_fast_t yystate = 0;
     /* Number of tokens to shift before error messages enabled.  */
@@ -1085,22 +1098,20 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* programa: TIPO MAIN PA PC CA declaraciones sentencias CC  */
-#line 34 "parser.y"
-                                                         { (yyval.ast) = crear_arbol_nodo(PROGRAMA, (yyvsp[-2].ast), (yyvsp[-1].ast)); 
-                                                            imprimir_vertical((yyval.ast), "", 1); Simbolo* tabla = crearTabla(); 
-                                                            crearTablas((yyval.ast), tabla);
-                                                            printTabla(tabla);}
-#line 1094 "parser.tab.c"
+#line 43 "parser.y"
+                                                         { *destino = crear_arbol_nodo(PROGRAMA, (yyvsp[-2].ast), (yyvsp[-1].ast)); 
+                                                            imprimir_vertical(*destino, "", 1);}
+#line 1105 "parser.tab.c"
     break;
 
   case 3: /* declaraciones: %empty  */
-#line 40 "parser.y"
+#line 47 "parser.y"
                                         { (yyval.ast) = NULL; }
-#line 1100 "parser.tab.c"
+#line 1111 "parser.tab.c"
     break;
 
   case 4: /* declaraciones: declaraciones d SCOLON  */
-#line 41 "parser.y"
+#line 48 "parser.y"
                                         {
                                             if((yyvsp[-2].ast) == NULL) {
                                                 (yyval.ast) = (yyvsp[-1].ast);
@@ -1108,28 +1119,28 @@ yyreduce:
                                                 (yyval.ast) = crear_arbol_nodo(DECLARACIONES, (yyvsp[-2].ast), (yyvsp[-1].ast));
                                             }  
                                         }
-#line 1112 "parser.tab.c"
-    break;
-
-  case 5: /* d: TIPO ID  */
-#line 50 "parser.y"
-            { 
-                Arbol* id_arbol = crear_arbol_id((yyvsp[0].id), NULL, NULL);
-                id_arbol->info_id.tipo = (yyvsp[-1].tipo);
-                (yyval.ast) = crear_arbol_nodo(DECLARACION, id_arbol, NULL);
-                
-            }
 #line 1123 "parser.tab.c"
     break;
 
+  case 5: /* d: TIPO ID  */
+#line 57 "parser.y"
+            { 
+                Arbol* id_arbol = crear_arbol_id((yyvsp[0].id), NULL, NULL);
+                id_arbol->info->id.tipo = (yyvsp[-1].tipo);
+                (yyval.ast) = crear_arbol_nodo(DECLARACION, id_arbol, NULL);
+                
+            }
+#line 1134 "parser.tab.c"
+    break;
+
   case 6: /* sentencias: %empty  */
-#line 61 "parser.y"
+#line 68 "parser.y"
                         { (yyval.ast) = NULL; }
-#line 1129 "parser.tab.c"
+#line 1140 "parser.tab.c"
     break;
 
   case 7: /* sentencias: sentencias s SCOLON  */
-#line 62 "parser.y"
+#line 69 "parser.y"
                                 {
                                     if((yyvsp[-2].ast) == NULL) {
                                         (yyval.ast) = (yyvsp[-1].ast);
@@ -1137,58 +1148,90 @@ yyreduce:
                                         (yyval.ast) = crear_arbol_nodo(SENTENCIAS, (yyvsp[-2].ast), (yyvsp[-1].ast));
                                     }
                                 }
-#line 1141 "parser.tab.c"
+#line 1152 "parser.tab.c"
     break;
 
   case 8: /* s: ID EQ expresion  */
-#line 71 "parser.y"
+#line 78 "parser.y"
                     {
                         Arbol* id_arbol = crear_arbol_id((yyvsp[-2].id), NULL, NULL);
                         (yyval.ast) = crear_arbol_nodo(ASIGNACION, id_arbol, (yyvsp[0].ast));
                     }
-#line 1150 "parser.tab.c"
+#line 1161 "parser.tab.c"
     break;
 
   case 9: /* s: RETURN  */
-#line 75 "parser.y"
+#line 82 "parser.y"
                     {(yyval.ast) = crear_arbol_nodo(RETURN_INFO, NULL, NULL);}
-#line 1156 "parser.tab.c"
+#line 1167 "parser.tab.c"
     break;
 
   case 10: /* s: RETURN expresion  */
-#line 76 "parser.y"
+#line 83 "parser.y"
                     {(yyval.ast) = crear_arbol_nodo(RETURN_INFO, (yyvsp[0].ast), NULL);}
-#line 1162 "parser.tab.c"
+#line 1173 "parser.tab.c"
     break;
 
   case 11: /* expresion: ID  */
-#line 79 "parser.y"
-                                    {(yyval.ast) = crear_arbol_id((yyvsp[0].id), NULL, NULL);}
-#line 1168 "parser.tab.c"
+#line 86 "parser.y"
+                                   {(yyval.ast) = crear_arbol_id((yyvsp[0].id), NULL, NULL);}
+#line 1179 "parser.tab.c"
     break;
 
   case 12: /* expresion: DIGITO  */
-#line 80 "parser.y"
-                                    {int* valor = malloc(sizeof(int)); 
+#line 87 "parser.y"
+                                   {int* valor = malloc(sizeof(int)); 
                                     *valor = (yyvsp[0].num); 
                                     (yyval.ast) = crear_arbol_literal(valor, ENTERO, NULL, NULL);}
-#line 1176 "parser.tab.c"
+#line 1187 "parser.tab.c"
     break;
 
-  case 13: /* expresion: expresion ADD expresion  */
-#line 83 "parser.y"
-                                    {(yyval.ast) = crear_arbol_operador('+', NULL, (yyvsp[-2].ast), (yyvsp[0].ast));}
-#line 1182 "parser.tab.c"
+  case 13: /* expresion: VERDAD  */
+#line 90 "parser.y"
+                                   {bool* valor = malloc(sizeof(bool));
+                                    *valor = (yyvsp[0].b);
+                                    (yyval.ast) = crear_arbol_literal(valor, BOOL, NULL, NULL);}
+#line 1195 "parser.tab.c"
     break;
 
-  case 14: /* expresion: expresion MULT expresion  */
-#line 84 "parser.y"
-                                    {(yyval.ast) = crear_arbol_operador('*', NULL, (yyvsp[-2].ast), (yyvsp[0].ast));}
-#line 1188 "parser.tab.c"
+  case 14: /* expresion: expresion ADD expresion  */
+#line 93 "parser.y"
+                                   {(yyval.ast) = crear_arbol_operador("+", NULL, (yyvsp[-2].ast), (yyvsp[0].ast));}
+#line 1201 "parser.tab.c"
+    break;
+
+  case 15: /* expresion: expresion MULT expresion  */
+#line 94 "parser.y"
+                                   {(yyval.ast) = crear_arbol_operador("*", NULL, (yyvsp[-2].ast), (yyvsp[0].ast));}
+#line 1207 "parser.tab.c"
+    break;
+
+  case 16: /* expresion: expresion AND expresion  */
+#line 95 "parser.y"
+                                   {(yyval.ast) = crear_arbol_operador("&&", NULL, (yyvsp[-2].ast), (yyvsp[0].ast));}
+#line 1213 "parser.tab.c"
+    break;
+
+  case 17: /* expresion: expresion OR expresion  */
+#line 96 "parser.y"
+                                   {(yyval.ast) = crear_arbol_operador("||", NULL, (yyvsp[-2].ast), (yyvsp[0].ast));}
+#line 1219 "parser.tab.c"
+    break;
+
+  case 18: /* expresion: expresion COMP expresion  */
+#line 97 "parser.y"
+                                   {(yyval.ast) = crear_arbol_operador("==", NULL, (yyvsp[-2].ast), (yyvsp[0].ast));}
+#line 1225 "parser.tab.c"
+    break;
+
+  case 19: /* expresion: NOT expresion  */
+#line 98 "parser.y"
+                                   {(yyval.ast) = crear_arbol_operador("!", NULL, (yyvsp[0].ast), NULL);}
+#line 1231 "parser.tab.c"
     break;
 
 
-#line 1192 "parser.tab.c"
+#line 1235 "parser.tab.c"
 
       default: break;
     }
@@ -1235,7 +1278,7 @@ yyerrlab:
   if (!yyerrstatus)
     {
       ++yynerrs;
-      yyerror (YY_("syntax error"));
+      yyerror (destino, YY_("syntax error"));
     }
 
   if (yyerrstatus == 3)
@@ -1252,7 +1295,7 @@ yyerrlab:
       else
         {
           yydestruct ("Error: discarding",
-                      yytoken, &yylval);
+                      yytoken, &yylval, destino);
           yychar = YYEMPTY;
         }
     }
@@ -1308,7 +1351,7 @@ yyerrlab1:
 
 
       yydestruct ("Error: popping",
-                  YY_ACCESSING_SYMBOL (yystate), yyvsp);
+                  YY_ACCESSING_SYMBOL (yystate), yyvsp, destino);
       YYPOPSTACK (1);
       yystate = *yyssp;
       YY_STACK_PRINT (yyss, yyssp);
@@ -1346,7 +1389,7 @@ yyabortlab:
 | yyexhaustedlab -- YYNOMEM (memory exhaustion) comes here.  |
 `-----------------------------------------------------------*/
 yyexhaustedlab:
-  yyerror (YY_("memory exhausted"));
+  yyerror (destino, YY_("memory exhausted"));
   yyresult = 2;
   goto yyreturnlab;
 
@@ -1361,7 +1404,7 @@ yyreturnlab:
          user semantic actions for why this is necessary.  */
       yytoken = YYTRANSLATE (yychar);
       yydestruct ("Cleanup: discarding lookahead",
-                  yytoken, &yylval);
+                  yytoken, &yylval, destino);
     }
   /* Do not reclaim the symbols of the rule whose action triggered
      this YYABORT or YYACCEPT.  */
@@ -1370,7 +1413,7 @@ yyreturnlab:
   while (yyssp != yyss)
     {
       yydestruct ("Cleanup: popping",
-                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp);
+                  YY_ACCESSING_SYMBOL (+*yyssp), yyvsp, destino);
       YYPOPSTACK (1);
     }
 #ifndef yyoverflow
@@ -1381,9 +1424,9 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 87 "parser.y"
+#line 101 "parser.y"
 
-
+/*
 int main(int argc, char **argv) {
     if (argc > 1) {
         FILE *archivo = fopen(argv[1], "r");
@@ -1394,11 +1437,14 @@ int main(int argc, char **argv) {
         yyin = archivo;
     }
 
-    return yyparse();
+    Arbol* arbol = NULL;
+
+    return yyparse(&arbol);
 }
+*/
 
 
-void yyerror(const char *s) {
+void yyerror(Arbol** destino, const char *s) {
     fprintf(stderr, "Error: %s\n", s);
 }
          

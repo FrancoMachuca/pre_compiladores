@@ -1,1 +1,7 @@
-int main() { bool z; int x; x = 48; return x;}
+int main() { 
+    bool za; 
+    int x; 
+    za = false || false;
+    x = 2;
+    return z;
+}

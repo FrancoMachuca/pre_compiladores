@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "tabla_simbolos/tabla.h"
+#include "tabla_simbolos/tabla_simbolos.h"
 #include "parser.tab.h"
 extern FILE *yyin;
 
@@ -38,11 +38,11 @@ Tipo obtener_tipo(Arbol *nodo)
     switch (nodo->tipo_info)
     {
     case LITERAL_INFO:
-        return nodo->info->info_literal.tipo;
+        return nodo->info->literal.tipo;
     case OPERADOR_INFO:
-        return nodo->info->info_operador.tipo;
+        return nodo->info->operador.tipo;
     case ID_INFO:
-        return nodo->info->info_id.tipo;
+        return nodo->info->id.tipo;
     default:
         return -1;
     }
@@ -60,17 +60,17 @@ void *obtener_valor(Arbol *nodo)
     {
     case LITERAL_INFO:
         tipo = obtener_tipo(nodo);
-        valor = nodo->info->info_literal.valor;
+        valor = nodo->info->literal.valor;
         print_valor(tipo, valor, "[INTERPRETE] obtener_valor: literal = ");
         break;
     case OPERADOR_INFO:
         tipo = obtener_tipo(nodo);
-        valor = nodo->info->info_operador.valor;
+        valor = nodo->info->operador.valor;
         print_valor(tipo, valor, "[INTERPRETE] obtener_valor: operador = ");
         break;
     case ID_INFO:
         tipo = obtener_tipo(nodo);
-        valor = nodo->info->info_id.valor;
+        valor = nodo->info->id.valor;
         print_valor(tipo, valor, "[INTERPRETE] obtener_valor: id = ");
         break;
     default:
@@ -152,11 +152,11 @@ void interprete(Arbol *arbol)
         Arbol *der = arbol->der;
 
         void *valor = obtener_valor(der);
-        izq->info->info_id.valor = valor;
+        izq->info->id.valor = valor;
         Tipo tipo = obtener_tipo(izq);
 
         printf("[INTERPRETE] Asignación: %s = ",
-               izq->info->info_id.id);
+               izq->info->id.nombre);
         print_valor(tipo, valor, "");
 
         break;
@@ -175,10 +175,10 @@ void interprete(Arbol *arbol)
         void *valor_der = obtener_valor(der);
 
         Tipo tipo = obtener_tipo(izq);
-        char *op = strdup(arbol->info->info_operador.op);
+        char *op = strdup(arbol->info->operador.nombre);
 
-        arbol->info->info_operador.valor = calcular_op(op, valor_izq, valor_der, tipo);
-        void *valor = arbol->info->info_operador.valor;
+        arbol->info->operador.valor = calcular_op(op, valor_izq, valor_der, tipo);
+        void *valor = arbol->info->operador.valor;
 
         printf("[INTERPRETE] operador %s aplicado -> ", op);
         print_valor(tipo, valor, "");
@@ -214,7 +214,7 @@ int main(int argc, char **argv)
     }
 
     Simbolo *tabla = crearTabla();
-    crearTablas(arbol, tabla);
+    analisisSemantico(arbol, tabla);
 
     interprete(arbol);
 

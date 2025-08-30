@@ -5,7 +5,7 @@ YACC = bison -d
 LDFLAGS = -lfl
 
 # Fuentes
-SRC = parser.tab.c lex.yy.c AST/ast.c tabla_simbolos/tabla.c interprete.c
+SRC = parser.tab.c lex.yy.c AST/ast.c tabla_simbolos/tabla_simbolos.c interprete.c
 OBJ = $(SRC:.c=.o)
 
 # Ejecutables
@@ -19,8 +19,8 @@ $(PROG): $(OBJ)
 parser.tab.c parser.tab.h: parser.y
 	$(YACC) parser.y
 
-lex.yy.c: ej1.l
-	$(LEX) ej1.l
+lex.yy.c: lexer.l
+	$(LEX) lexer.l
 
 # Reglas genéricas para compilar .c a .o
 %.o: %.c

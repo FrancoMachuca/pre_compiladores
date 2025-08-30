@@ -4,14 +4,14 @@
 
 typedef struct Info_ID
 {
-    char *id;
+    char *nombre;
     void *valor;
     Tipo tipo;
 } Info_ID;
 
 typedef struct Info_Operador
 {
-    char *op;
+    char *nombre;
     void *valor;
     Tipo tipo;
 } Info_Operador;
@@ -22,16 +22,11 @@ typedef struct Info_Literal
     Tipo tipo;
 } Info_Literal;
 
-typedef struct Info_Nodo
-{
-    char *nodo;
-} Info_Nodo;
-
 typedef struct Info_Union
 {
-    Info_ID info_id;
-    Info_Operador info_operador;
-    Info_Literal info_literal;
+    Info_ID id;
+    Info_Operador operador;
+    Info_Literal literal;
 } Info_Union;
 
 typedef struct Arbol

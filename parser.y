@@ -10,7 +10,7 @@
 %code requires {
     #include <stdbool.h>
     #include "AST/ast.h"
-    #include "tabla_simbolos/tabla.h"
+    #include "tabla_simbolos/tabla_simbolos.h"
 }
 
 %parse-param { Arbol **destino }
@@ -41,7 +41,7 @@
 %%
 
 programa: TIPO MAIN PA PC CA declaraciones sentencias CC { *destino = crear_arbol_nodo(PROGRAMA, $6, $7); 
-                                                            imprimir_vertical(*destino, "", 1);} // CREAR RAIZ CON "PROGRAMA"
+                                                            imprimir_vertical(*destino, "", 1);}
 
 
 declaraciones: /* vacio */              { $$ = NULL; }
@@ -56,7 +56,7 @@ declaraciones: /* vacio */              { $$ = NULL; }
 
 d: TIPO ID  { 
                 Arbol* id_arbol = crear_arbol_id($2, NULL, NULL);
-                id_arbol->info->info_id.tipo = $1;
+                id_arbol->info->id.tipo = $1;
                 $$ = crear_arbol_nodo(DECLARACION, id_arbol, NULL);
                 
             }                 

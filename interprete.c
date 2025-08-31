@@ -163,7 +163,17 @@ void interprete(Arbol *arbol)
     }
 
     case RETURN_INFO:
-        printf("[INTERPRETE] RETURN encontrado (sin implementar)\n");
+        void *valor = obtener_valor(arbol);
+        Tipo tipo = obtener_tipo(arbol);
+
+        if (tipo == VACIO)
+        {
+            printf("[INTERPRETE] RETURN void\n");
+            return;
+        }
+
+        print_valor(tipo, valor, "[INTERPRETE] RETURN ");
+
         break;
 
     case OPERADOR_INFO:

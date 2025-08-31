@@ -14,16 +14,12 @@ typedef enum
     OPERADOR_INFO,
     LITERAL_INFO,
     DECLARACION,
-    ASIGNACION,    
+    ASIGNACION,
     PROGRAMA,
     SENTENCIAS,
     RETURN_INFO,
-    DECLARACIONES
+    DECLARACIONES,
+    FUNCION
 } Tipo_Info;
-
-typedef enum
-{
-    VARIABLE
-} Flag;
 
 #endif

@@ -24,6 +24,7 @@ WS              [ \t\n]+
 "return"                            { return RETURN; }
 "int"                               { yylval.tipo = ENTERO; return TIPO; }
 "bool"                              { yylval.tipo = BOOL; return TIPO; }
+"void" 								{ yylval.tipo = VACIO; return TIPO;}
 {DIGITO}+                           { yylval.num = atoi(yytext); return DIGITO; }
 {VERDAD}                            { yylval.b = strcmp(yytext, "true") == 0 ? true : false; return VERDAD; }
 {LETRA}({LETRA}|{DIGITO})*          { yylval.id = strdup(yytext); return ID; }

@@ -46,6 +46,20 @@ Arbol *crear_arbol_literal(void *valor, Tipo tipo, Arbol *izq, Arbol *der)
     return arbol;
 }
 
+Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, Arbol *izq, Arbol *der)
+{
+    Arbol *arbol = malloc(sizeof(Arbol));
+    arbol->info = malloc(sizeof(Info_Union));
+    arbol->tipo_info = FUNCION;
+    arbol->info->funcion.valor = NULL;
+    arbol->info->funcion.nombre = strdup(nombre);
+    arbol->info->funcion.tipo = tipo;
+    arbol->izq = izq;
+    arbol->der = der;
+
+    return arbol;
+}
+
 Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
@@ -138,7 +152,7 @@ void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo)
     }
     else if (arbol->tipo_info == RETURN_INFO)
     {
-        printf("RETURN\n");
+        printf("RETURN_INFO\n");
     }
     else if (arbol->tipo_info == ASIGNACION)
     {

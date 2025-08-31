@@ -1,7 +1,5 @@
 int main() { 
-    bool za; 
-    int x; 
-    za = false || false;
-    x = 2;
-    return z;
+    int x;
+    x = 2 + 2;
+    return x + 2;
 }

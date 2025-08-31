@@ -22,11 +22,19 @@ typedef struct Info_Literal
     Tipo tipo;
 } Info_Literal;
 
+typedef struct Info_Funcion
+{
+    char *nombre;
+    void *valor;
+    Tipo tipo;
+} Info_Funcion;
+
 typedef struct Info_Union
 {
     Info_ID id;
     Info_Operador operador;
     Info_Literal literal;
+    Info_Funcion funcion;
 } Info_Union;
 
 typedef struct Arbol
@@ -40,6 +48,7 @@ typedef struct Arbol
 Arbol *crear_arbol_operador(char *op, void *valor, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_id(char *id, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_literal(void *valor, Tipo tipo, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der);
 void inorder(Arbol *arbol);
 void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo);

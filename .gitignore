@@ -1,0 +1,9 @@
+parser.tab.c
+parser.tab.h
+programa
+lex.yy.o
+interprete.o
+parser.tab.o
+tabla_simbolos/tabla.o
+AST/ast.o
+.vscode

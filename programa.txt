@@ -1,1 +1,3 @@
-int main() { bool z; int x; x = 48; return x;}
+bool main() { 
+    return true == true;
+}

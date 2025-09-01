@@ -16,8 +16,6 @@ void agregarSimbolo(Simbolo *tabla, Info_Union *info, Tipo_Info flag);
 
 Simbolo *buscarSimbolo(Simbolo *tabla, char *nombre, Tipo_Info flag);
 
-void vincularIds(Arbol *arbol, Simbolo *tabla);
-
 void printTabla(Simbolo *tabla);
 
 void recolectarDeclaraciones(Arbol *arbol, Simbolo *tabla);
@@ -26,11 +24,13 @@ void chequearTipos(Arbol *arbol, Simbolo *tabla);
 
 void analisisSemantico(Arbol *arbol, Simbolo *tabla);
 
+int procesarId(Arbol *hijo, Tipo_Info tipoPadre, Simbolo *tabla);
+
 void procesarAsignacion(Arbol *arbol, Simbolo *tabla);
 
 void procesarDeclaracion(Arbol *arbol, Simbolo *tabla);
 
-void procesarOperador(Arbol *arbol);
+void procesarOperador(Arbol *arbol, Simbolo *tabla);
 
 void procesarFuncion(Arbol *arbol, Simbolo *tabla);
 

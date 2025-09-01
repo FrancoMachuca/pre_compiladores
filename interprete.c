@@ -163,8 +163,8 @@ void interprete(Arbol *arbol)
     }
 
     case RETURN_INFO:
-        void *valor = obtener_valor(arbol);
-        Tipo tipo = obtener_tipo(arbol);
+        void *valor = obtener_valor(arbol->izq);
+        Tipo tipo = obtener_tipo(arbol->izq);
 
         if (tipo == VACIO)
         {

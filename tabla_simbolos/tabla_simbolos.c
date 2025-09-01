@@ -63,29 +63,6 @@ Simbolo *buscarSimbolo(Simbolo *tabla, char *nombre, Tipo_Info flag)
   return NULL;
 }
 
-void vincularIds(Arbol *arbol, Simbolo *tabla)
-{
-  if (!arbol)
-    return;
-
-  if (arbol->tipo_info == ID_INFO)
-  {
-    char *nombre = arbol->info->id.nombre;
-    Simbolo *s = buscarSimbolo(tabla, nombre, ID_INFO);
-    if (!s)
-    {
-      printf("Variable %s no declarada.\n", nombre);
-    }
-    else
-    {
-      arbol->info = s->info;
-    }
-  }
-
-  vincularIds(arbol->izq, tabla);
-  vincularIds(arbol->der, tabla);
-}
-
 void printTabla(Simbolo *tabla)
 {
   Simbolo *aux = tabla->next;
@@ -115,9 +92,6 @@ void recolectarDeclaraciones(Arbol *arbol, Simbolo *tabla)
 
   switch (arbol->tipo_info)
   {
-  case FUNCION:
-    procesarFuncion(arbol, tabla);
-    break;
   case DECLARACION:
     procesarDeclaracion(arbol, tabla);
     break;
@@ -143,7 +117,7 @@ void chequearTipos(Arbol *arbol, Simbolo *tabla)
     procesarAsignacion(arbol, tabla);
     break;
   case OPERADOR_INFO:
-    procesarOperador(arbol);
+    procesarOperador(arbol, tabla);
     break;
   case RETURN_INFO:
     procesarReturn(arbol, tabla);
@@ -158,55 +132,75 @@ void analisisSemantico(Arbol *arbol, Simbolo *tabla)
   if (!arbol)
     return;
 
-  recolectarDeclaraciones(arbol, tabla);
+  procesarFuncion(arbol, tabla);
 
-  vincularIds(arbol, tabla);
+  recolectarDeclaraciones(arbol->izq, tabla);
 
-  chequearTipos(arbol, tabla);
+  chequearTipos(arbol->der, tabla);
+}
+
+int procesarId(Arbol *hijo, Tipo_Info tipoPadre, Simbolo *tabla)
+{
+  char *nombre = hijo->info->id.nombre;
+  Tipo_Info flag = hijo->tipo_info;
+  Simbolo *simbolo = buscarSimbolo(tabla, nombre, flag);
+
+  switch (tipoPadre)
+  {
+  case DECLARACION:
+
+    if (!simbolo)
+    {
+      agregarSimbolo(tabla, hijo->info, flag);
+    }
+    else
+    {
+      printf("Error: variable '%s' ya declarada.\n", nombre);
+    }
+    break;
+
+  default:
+    if (simbolo)
+    {
+      hijo->info = simbolo->info;
+      return 1;
+    }
+    else
+    {
+      printf("Error: variable '%s' no declarada. \n", nombre);
+      return 0;
+    }
+    break;
+  }
+
+  return 1;
 }
 
 void procesarDeclaracion(Arbol *arbol, Simbolo *tabla)
 {
-  char *nombre = arbol->izq->info->id.nombre;
-  Tipo_Info flag = arbol->izq->tipo_info;
-
-  if (buscarSimbolo(tabla, nombre, flag) == NULL)
-  {
-    agregarSimbolo(tabla, arbol->izq->info, flag);
-  }
-  else
-  {
-    printf("Error: variable '%s' ya declarada.\n", nombre);
-  }
+  procesarId(arbol->izq, arbol->tipo_info, tabla);
 }
 
 void procesarAsignacion(Arbol *arbol, Simbolo *tabla)
 {
-  char *nombre = arbol->izq->info->id.nombre;
-  Tipo_Info flag = arbol->izq->tipo_info;
-  Simbolo *simbolo = buscarSimbolo(tabla, nombre, flag);
 
-  if (!simbolo)
+  if (!procesarId(arbol->izq, arbol->tipo_info, tabla))
   {
-    printf("Variable %s no declarada.\n", nombre);
     return;
   }
 
-  Tipo tipoIzq = simbolo->info->id.tipo;
+  Tipo tipoIzq = arbol->izq->info->id.tipo;
   Tipo tipoDer;
 
   switch (arbol->der->tipo_info)
   {
   case ID_INFO:
   {
-    char *nombreDerecho = arbol->der->info->id.nombre;
-    Simbolo *simDerecho = buscarSimbolo(tabla, nombreDerecho, flag);
-    if (!simDerecho)
+    if (!procesarId(arbol->izq, arbol->tipo_info, tabla))
     {
-      printf("Variable %s no declarada.\n", nombreDerecho);
       return;
     }
-    tipoDer = simDerecho->info->id.tipo;
+    tipoDer = arbol->der->info->id.tipo;
     break;
   }
   case LITERAL_INFO:
@@ -227,8 +221,17 @@ void procesarAsignacion(Arbol *arbol, Simbolo *tabla)
   }
 }
 
-void procesarOperador(Arbol *arbol)
+void procesarOperador(Arbol *arbol, Simbolo *tabla)
 {
+  if (arbol->izq->tipo_info == ID_INFO && !procesarId(arbol->izq, arbol->tipo_info, tabla))
+  {
+    return;
+  }
+  else if (arbol->izq->tipo_info == ID_INFO && !procesarId(arbol->izq, arbol->tipo_info, tabla))
+  {
+    return;
+  }
+
   Tipo tipoIzq = obtenerTipoNodo(arbol->izq);
   Tipo tipoDer = obtenerTipoNodo(arbol->der);
 
@@ -286,22 +289,14 @@ void procesarReturn(Arbol *arbol, Simbolo *tabla)
   Tipo_Info flag = arbol->izq->tipo_info;
   Tipo tipo = obtenerTipoNodo(arbol->izq);
 
-  Simbolo *simbolo_id;
   char *nombre;
 
   switch (flag)
   {
   case ID_INFO:
-    nombre = arbol->izq->info->id.nombre;
-    simbolo_id = buscarSimbolo(tabla, nombre, flag);
-
-    if (!simbolo_id)
-    {
-      printf("Variable %s no declarada.\n", nombre);
-      return;
-    }
-
-    tipo = simbolo_id->info->id.tipo;
+    procesarId(arbol->izq, arbol->tipo_info, tabla);
+    tipo = obtenerTipoNodo(arbol->izq);
+    nombre = arbol->info->id.nombre;
 
     if (tipo_funcion != tipo)
     {

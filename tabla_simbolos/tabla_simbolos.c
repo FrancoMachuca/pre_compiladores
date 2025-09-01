@@ -227,7 +227,7 @@ void procesarOperador(Arbol *arbol, Simbolo *tabla)
   {
     return;
   }
-  else if (arbol->izq->tipo_info == ID_INFO && !procesarId(arbol->izq, arbol->tipo_info, tabla))
+  else if (arbol->der->tipo_info == ID_INFO && !procesarId(arbol->der, arbol->tipo_info, tabla))
   {
     return;
   }

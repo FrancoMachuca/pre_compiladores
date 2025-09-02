@@ -1,7 +1,14 @@
 int main() { 
-    bool za; 
+    bool za;
+    bool zb;
+    bool zc;
     int x; 
-    za = false || false;
-    x = 2;
-    return z;
+    int y;
+    zb = false;
+    y = 2 * 2;
+    x = 2 + 2;
+    x = y;
+    za = true && zb;
+    zc = !za;
+    return x;
 }

@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "tabla_simbolos.h"
 #include <string.h>
+#include "tabla_simbolos.h"
+#include "helpers.h"
 
 Simbolo *crearTabla()
 {
@@ -144,6 +145,7 @@ int procesarId(Arbol *hijo, Tipo_Info tipoPadre, Simbolo *tabla)
   char *nombre = hijo->info->id.nombre;
   Tipo_Info flag = hijo->tipo_info;
   Simbolo *simbolo = buscarSimbolo(tabla, nombre, flag);
+  int linea = hijo->linea;
 
   switch (tipoPadre)
   {
@@ -155,7 +157,7 @@ int procesarId(Arbol *hijo, Tipo_Info tipoPadre, Simbolo *tabla)
     }
     else
     {
-      printf("Error: variable '%s' ya declarada.\n", nombre);
+      printf("Linea: %d. Error: variable '%s' ya declarada.\n", linea, nombre);
     }
     break;
 
@@ -167,7 +169,7 @@ int procesarId(Arbol *hijo, Tipo_Info tipoPadre, Simbolo *tabla)
     }
     else
     {
-      printf("Error: variable '%s' no declarada. \n", nombre);
+      printf("Linea %d. Error: variable '%s' no declarada. \n", linea, nombre);
       return 0;
     }
     break;
@@ -191,6 +193,8 @@ void procesarAsignacion(Arbol *arbol, Simbolo *tabla)
 
   Tipo tipoIzq = arbol->izq->info->id.tipo;
   Tipo tipoDer;
+  int linea = arbol->izq->linea;
+  int col = arbol->izq->colum;
 
   switch (arbol->der->tipo_info)
   {
@@ -210,13 +214,13 @@ void procesarAsignacion(Arbol *arbol, Simbolo *tabla)
     tipoDer = arbol->der->info->operador.tipo;
     break;
   default:
-    printf("Error: tipo de nodo derecho no válido.\n");
+    printf("Linea %d Col %d. Error: tipo de nodo derecho no válido.\n", linea, col);
     return;
   }
 
   if (tipoIzq != tipoDer)
   {
-    printf("Error de tipo.\n");
+    printf("Linea: %d. Error de tipo.\n", linea);
     return;
   }
 }
@@ -227,19 +231,20 @@ void procesarOperador(Arbol *arbol, Simbolo *tabla)
   {
     return;
   }
-  else if (arbol->izq->tipo_info == ID_INFO && !procesarId(arbol->izq, arbol->tipo_info, tabla))
+  else if (arbol->der->tipo_info == ID_INFO && !procesarId(arbol->der, arbol->tipo_info, tabla))
   {
     return;
   }
 
   Tipo tipoIzq = obtenerTipoNodo(arbol->izq);
   Tipo tipoDer = obtenerTipoNodo(arbol->der);
+  int linea = arbol->linea;
 
   if (arbol->izq && arbol->der)
   {
     if (tipoIzq != tipoDer)
     {
-      printf("Error de tipo en operador '%s'.\n", arbol->info->operador.nombre);
+      printf("Linea: %d. Error de tipo en operador '%s'.\n", linea, arbol->info->operador.nombre);
       return;
     }
     arbol->info->operador.tipo = tipoIzq;
@@ -275,6 +280,7 @@ void procesarReturn(Arbol *arbol, Simbolo *tabla)
 
   Simbolo *simbolo_funcion = buscarSimbolo(tabla, "main", FUNCION);
   Tipo tipo_funcion = simbolo_funcion->info->funcion.tipo;
+  int linea = arbol->izq->linea;
 
   if (!arbol->izq && tipo_funcion == VACIO)
   {
@@ -282,7 +288,7 @@ void procesarReturn(Arbol *arbol, Simbolo *tabla)
   }
   else if (!arbol->izq && tipo_funcion != VACIO)
   {
-    printf("Error de tipos en return, tipo_funcion no void\n");
+    printf("Linea: %d. Error de tipos en return, tipo_funcion no void\n", linea);
     return;
   }
 
@@ -300,7 +306,7 @@ void procesarReturn(Arbol *arbol, Simbolo *tabla)
 
     if (tipo_funcion != tipo)
     {
-      printf("Error de tipos en return, variable: %s\n", nombre);
+      printf("Linea: %d. Error de tipos en return, variable: %s\n", linea, nombre);
       return;
     }
 
@@ -311,7 +317,7 @@ void procesarReturn(Arbol *arbol, Simbolo *tabla)
 
     if (tipo_funcion != tipo)
     {
-      printf("Error de tipos en return, operacion: %s\n", nombre);
+      printf("Linea %d. Error de tipos en return, operacion: %s\n", linea, nombre);
     }
 
     break;
@@ -319,7 +325,9 @@ void procesarReturn(Arbol *arbol, Simbolo *tabla)
   case LITERAL_INFO:
     if (tipo_funcion != tipo)
     {
-      printf("Error de tipos en return, literal: ");
+      printf("Linea: %d. ", linea);
+      void *valor = obtener_valor(arbol->izq);
+      print_valor(tipo, valor, "Error de tipos en return, literal: ");
     }
 
     break;
@@ -328,24 +336,4 @@ void procesarReturn(Arbol *arbol, Simbolo *tabla)
   }
 
   arbol->info = simbolo_funcion->info;
-}
-
-Tipo obtenerTipoNodo(Arbol *nodo)
-{
-  if (!nodo)
-    return VACIO;
-
-  switch (nodo->tipo_info)
-  {
-  case OPERADOR_INFO:
-    return nodo->info->operador.tipo;
-  case LITERAL_INFO:
-    return nodo->info->literal.tipo;
-  case ID_INFO:
-    return nodo->info->id.tipo;
-  case FUNCION:
-    return nodo->info->funcion.tipo;
-  default:
-    return VACIO;
-  }
 }

@@ -3,8 +3,10 @@
     #include <string.h>
     #include "AST/ast.h"
 	int yylex(void);
-	void yyerror(Arbol** destino, const char *s);
+	extern void yyerror();
     extern FILE *yyin;
+    extern int yylineno;
+    extern int yycolumn;
 %}
 
 %code requires {
@@ -40,7 +42,7 @@
 
 %%
 
-programa: TIPO MAIN PA PC CA declaraciones sentencias CC { *destino = crear_arbol_funcion("main", $1, $6, $7); 
+programa: TIPO MAIN PA PC CA declaraciones sentencias CC { *destino = crear_arbol_funcion("main", yylineno, yycolumn, $1, $6, $7); 
                                                             imprimir_vertical(*destino, "", 1);}
 
 
@@ -55,7 +57,7 @@ declaraciones: /* vacio */              { $$ = NULL; }
              ;
 
 d: TIPO ID  { 
-                Arbol* id_arbol = crear_arbol_id($2, NULL, NULL);
+                Arbol* id_arbol = crear_arbol_id($2, yylineno, yycolumn, NULL, NULL);
                 printf("%d\n", $1);
                 id_arbol->info->id.tipo = $1;
                 $$ = crear_arbol_nodo(DECLARACION, id_arbol, NULL);
@@ -77,48 +79,26 @@ sentencias: /* vacio */ { $$ = NULL; }
           ;
 
 s: ID EQ expresion  {
-                        Arbol* id_arbol = crear_arbol_id($1, NULL, NULL);
+                        Arbol* id_arbol = crear_arbol_id($1, yylineno, yycolumn, NULL, NULL);
                         $$ = crear_arbol_nodo(ASIGNACION, id_arbol, $3);
                     }
  | RETURN           {$$ = crear_arbol_nodo(RETURN_INFO, NULL, NULL);}
  | RETURN expresion {$$ = crear_arbol_nodo(RETURN_INFO, $2, NULL);}
  ;
 
-expresion: ID                      {$$ = crear_arbol_id($1, NULL, NULL);}
+expresion: ID                      {$$ = crear_arbol_id($1, yylineno, yycolumn, NULL, NULL);}
         | DIGITO                   {int* valor = malloc(sizeof(int)); 
                                     *valor = $1; 
-                                    $$ = crear_arbol_literal(valor, ENTERO, NULL, NULL);}
+                                    $$ = crear_arbol_literal(valor, ENTERO, yylineno, yycolumn, NULL, NULL);}
         | VERDAD                   {bool* valor = malloc(sizeof(bool));
                                     *valor = $1;
-                                    $$ = crear_arbol_literal(valor, BOOL, NULL, NULL);}
-        | expresion ADD expresion  {$$ = crear_arbol_operador("+", NULL, $1, $3);}
-        | expresion MULT expresion {$$ = crear_arbol_operador("*", NULL, $1, $3);}
-        | expresion AND expresion  {$$ = crear_arbol_operador("&&", NULL, $1, $3);}
-        | expresion OR expresion   {$$ = crear_arbol_operador("||", NULL, $1, $3);}
-        | expresion COMP expresion {$$ = crear_arbol_operador("==", NULL, $1, $3);}
-        | NOT expresion            {$$ = crear_arbol_operador("!", NULL, $2, NULL);}
+                                    $$ = crear_arbol_literal(valor, BOOL, yylineno, yycolumn, NULL, NULL);}
+        | expresion ADD expresion  {$$ = crear_arbol_operador("+", NULL, yylineno, yycolumn, $1, $3);}
+        | expresion MULT expresion {$$ = crear_arbol_operador("*", NULL, yylineno, yycolumn, $1, $3);}
+        | expresion AND expresion  {$$ = crear_arbol_operador("&&", NULL, yylineno, yycolumn , $1, $3);}
+        | expresion OR expresion   {$$ = crear_arbol_operador("||", NULL, yylineno, yycolumn , $1, $3);}
+        | expresion COMP expresion {$$ = crear_arbol_operador("==", NULL, yylineno, yycolumn , $1, $3);}
+        | NOT expresion            {$$ = crear_arbol_operador("!", NULL, yylineno, yycolumn, $2, NULL);}
         ;  
 
 %%
-/*
-int main(int argc, char **argv) {
-    if (argc > 1) {
-        FILE *archivo = fopen(argv[1], "r");
-        if (!archivo) {
-            perror("No se pudo abrir el archivo");
-            return 1;
-        }
-        yyin = archivo;
-    }
-
-    Arbol* arbol = NULL;
-
-    return yyparse(&arbol);
-}
-*/
-
-
-void yyerror(Arbol** destino, const char *s) {
-    fprintf(stderr, "Error: %s\n", s);
-}
-         

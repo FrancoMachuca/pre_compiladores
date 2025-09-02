@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "parser.tab.h"
+int yycolumn = 1;
 %}
 
 %option yylineno
@@ -17,34 +18,35 @@ AND             "&&"
 OR              "\|\|"
 COMP            "=="
 NOT             "!"
-WS              [ \t\n]+
+WS              [ \t]+
 
 %%
-"main"                              { return MAIN; }
-"return"                            { return RETURN; }
-"int"                               { yylval.tipo = ENTERO; return TIPO; }
-"bool"                              { yylval.tipo = BOOL; return TIPO; }
-"void" 								{ yylval.tipo = VACIO; return TIPO;}
-{DIGITO}+                           { yylval.num = atoi(yytext); return DIGITO; }
-{VERDAD}                            { yylval.b = strcmp(yytext, "true") == 0 ? true : false; return VERDAD; }
-{LETRA}({LETRA}|{DIGITO})*          { yylval.id = strdup(yytext); return ID; }
-{ADD}                               { return ADD; }
-{MULT}                              { return MULT; }
-{EQ}                                { return EQ; }
-{AND}                               { return AND; }
-{OR}                                { return OR; }
-{COMP}                              { return COMP; }
-{NOT}                               { return NOT; }
-"("                                 { return PA; }
-")"                                 { return PC; }
-"{"                                 { return CA; }
-"}"                                 { return CC; }
-";"                                 { return SCOLON; }
-{WS}
+"main"                              {yycolumn += yyleng; return MAIN; }
+"return"                            {yycolumn += yyleng; return RETURN; }
+"int"                               {yycolumn += yyleng; yylval.tipo = ENTERO; return TIPO; }
+"bool"                              {yycolumn += yyleng; yylval.tipo = BOOL; return TIPO; }
+"void" 								{yycolumn += yyleng; yylval.tipo = VACIO; return TIPO;}
+{DIGITO}+                           {yycolumn += yyleng; yylval.num = atoi(yytext); return DIGITO; }
+{VERDAD}                            {yycolumn += yyleng; yylval.b = strcmp(yytext, "true") == 0 ? true : false; return VERDAD; }
+{LETRA}({LETRA}|{DIGITO})*          {yycolumn += yyleng; yylval.id = strdup(yytext); return ID; }
+{ADD}                               {yycolumn += yyleng; return ADD; }
+{MULT}                              {yycolumn += yyleng; return MULT; }
+{EQ}                                {yycolumn += yyleng; return EQ; }
+{AND}                               {yycolumn += yyleng; return AND; }
+{OR}                                {yycolumn += yyleng; return OR; }
+{COMP}                              {yycolumn += yyleng; return COMP; }
+{NOT}                               {yycolumn += yyleng; return NOT; }
+"("                                 {yycolumn += yyleng; return PA; }
+")"                                 {yycolumn += yyleng; return PC; }
+"{"                                 {yycolumn += yyleng; return CA; }
+"}"                                 {yycolumn += yyleng; return CC; }
+";"                                 {yycolumn += yyleng; return SCOLON; }
+{WS}								{yycolumn += yyleng;}
+[ \n]+								{yycolumn = 1;}
 .                                   { printf("Caracter no reconocido. \n"); exit(1); }                               
 %%
-/*
+
 void yyerror(){
-	printf("%s%d\n","-> Error de sintaxis en linea: ", yylineno);
+	printf("Linea %d Col %d\n└──Error de sintaxis. \n", yylineno, yycolumn);
 }     
-*/
+

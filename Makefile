@@ -1,14 +1,19 @@
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -I./AST -I./tabla_simbolos -I./utils
 LEX = flex
 YACC = bison -d
 LDFLAGS = -lfl
 
 # Fuentes
-SRC = parser.tab.c lex.yy.c AST/ast.c tabla_simbolos/tabla_simbolos.c interprete.c
+SRC = parser.tab.c lex.yy.c \
+      AST/ast.c \
+      tabla_simbolos/tabla_simbolos.c \
+      utils/helpers.c \
+      interprete.c
+
 OBJ = $(SRC:.c=.o)
 
-# Ejecutables
+# Ejecutable
 PROG = programa
 
 all: $(PROG)

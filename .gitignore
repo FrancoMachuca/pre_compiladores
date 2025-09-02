@@ -4,6 +4,7 @@ programa
 lex.yy.o
 interprete.o
 parser.tab.o
-tabla_simbolos/tabla.o
+tabla_simbolos/tabla_simbolos.o
 AST/ast.o
+utils/helpers.o
 .vscode

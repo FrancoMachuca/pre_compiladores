@@ -1,6 +1,7 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
+// Tipos de datos posibles
 typedef enum
 {
     VACIO = -1,
@@ -8,6 +9,7 @@ typedef enum
     BOOL
 } Tipo;
 
+// Tipos de nodos en el AST
 typedef enum
 {
     ID_INFO,

@@ -8,6 +8,14 @@
 #include "parser.tab.h"
 extern FILE *yyin;
 
+/**
+ * Recorre el AST y ejecuta la interpretación del programa.
+ *
+ * Procesa las asignaciones, operaciones y sentencias return.
+ * Cada nodo se interpreta recursivamente en postorden (izq → der → raíz).
+ *
+ * @param arbol Árbol de sintaxis abstracta (AST) a interpretar
+ */
 void interprete(Arbol *arbol)
 {
     if (arbol == NULL)
@@ -86,7 +94,7 @@ int main(int argc, char **argv)
             perror("No se pudo abrir el archivo");
             return 1;
         }
-        yyin = archivo; // importante: yyin es global de Flex
+        yyin = archivo;
     }
 
     Arbol *arbol = NULL;

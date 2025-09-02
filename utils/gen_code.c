@@ -7,6 +7,16 @@
 #include "../semantico.h"
 extern FILE *yyin;
 
+/**
+ * Genera código ensamblador a partir del AST.
+ *
+ * Recorre el árbol y escribe instrucciones según el tipo de nodo:
+ * FUNCION, DECLARACION, SENTENCIAS, ASIGNACION, ID_INFO, LITERAL_INFO, OPERADOR_INFO.
+ *
+ * @param ast Nodo del AST.
+ * @param file Archivo de salida (.asm).
+ * @param context Contexto actual (DECLARACIONES o SENTENCIAS).
+ */
 void gen_code(Arbol *ast, FILE *file, Tipo_Info context)
 {
     if (!ast)
@@ -190,7 +200,7 @@ int main(int argc, char **argv)
             perror("No se pudo abrir el archivo");
             return 1;
         }
-        yyin = archivo; // importante: yyin es global de Flex
+        yyin = archivo;
     }
 
     Arbol *arbol = NULL;

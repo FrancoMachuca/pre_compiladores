@@ -9,8 +9,9 @@ SRC = parser.tab.c lex.yy.c \
       AST/ast.c \
       tabla_simbolos/tabla_simbolos.c \
       utils/helpers.c \
-      interprete.c
-
+      interprete.c \
+	  semantico.c \
+	  errores.c
 OBJ = $(SRC:.c=.o)
 
 # Ejecutable

@@ -18,7 +18,7 @@ AND             "&&"
 OR              "\|\|"
 COMP            "=="
 NOT             "!"
-WS              [ \t]+
+WS              [ \t\r\n]+
 
 %%
 "main"                              {yycolumn += yyleng; return MAIN; }

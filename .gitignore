@@ -5,6 +5,8 @@ lex.yy.o
 interprete.o
 parser.tab.o
 tabla_simbolos/tabla_simbolos.o
+errores.o
+semantico.o
 AST/ast.o
 utils/helpers.o
 .vscode

@@ -156,9 +156,9 @@ void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo)
     {
         printf("SENTENCIAS\n");
     }
-    else if (arbol->tipo_info == PROGRAMA)
+    else if (arbol->tipo_info == FUNCION)
     {
-        printf("PROGRAMA\n");
+        printf("FUNCION %s\n", arbol->info->funcion.nombre);
     }
     else if (arbol->tipo_info == RETURN_INFO)
     {

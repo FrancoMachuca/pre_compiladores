@@ -4,6 +4,7 @@
 #include "../AST/ast.h"
 #include "../tabla_simbolos/tabla_simbolos.h"
 #include "../parser.tab.h"
+#include "../semantico.h"
 extern FILE *yyin;
 
 void gen_code(Arbol *ast, FILE *file, Tipo_Info context)

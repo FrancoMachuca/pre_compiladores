@@ -58,7 +58,6 @@ declaraciones: /* vacio */              { $$ = NULL; }
 
 d: TIPO ID  { 
                 Arbol* id_arbol = crear_arbol_id($2, yylineno, yycolumn, NULL, NULL);
-                printf("%d\n", $1);
                 id_arbol->info->id.tipo = $1;
                 $$ = crear_arbol_nodo(DECLARACION, yylineno, yycolumn, id_arbol, NULL);
                 
@@ -93,6 +92,7 @@ expresion: ID                      {$$ = crear_arbol_id($1, yylineno, yycolumn, 
         | VERDAD                   {bool* valor = malloc(sizeof(bool));
                                     *valor = $1;
                                     $$ = crear_arbol_literal(valor, BOOL, yylineno, yycolumn, NULL, NULL);}
+        | PA expresion PC          {$$ = $2;}
         | expresion ADD expresion  {$$ = crear_arbol_operador("+", NULL, yylineno, yycolumn, $1, $3);}
         | expresion MULT expresion {$$ = crear_arbol_operador("*", NULL, yylineno, yycolumn, $1, $3);}
         | expresion AND expresion  {$$ = crear_arbol_operador("&&", NULL, yylineno, yycolumn , $1, $3);}

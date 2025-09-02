@@ -42,7 +42,7 @@
 
 %%
 
-programa: TIPO MAIN PA PC CA declaraciones sentencias CC { *destino = crear_arbol_funcion("main", yylineno, yycolumn, $1, $6, $7); 
+programa: TIPO MAIN PA PC CA declaraciones sentencias CC { *destino = crear_arbol_funcion("main", $1, yylineno, yycolumn, $6, $7); 
                                                             imprimir_vertical(*destino, "", 1);}
 
 

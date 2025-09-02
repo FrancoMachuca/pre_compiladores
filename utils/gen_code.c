@@ -94,7 +94,7 @@ void gen_code(Arbol *ast, FILE *file, Tipo_Info context)
         {
             fputs("ADD ", file);
             gen_code(ast->izq, file, SENTENCIAS);
-            fputs(" ", file);
+            fputs(", ", file);
             gen_code(ast->der, file, SENTENCIAS);
             fputs("\n", file);
         }
@@ -102,7 +102,7 @@ void gen_code(Arbol *ast, FILE *file, Tipo_Info context)
         {
             fputs("MUL ", file);
             gen_code(ast->izq, file, SENTENCIAS);
-            fputs(" ", file);
+            fputs(", ", file);
             gen_code(ast->der, file, SENTENCIAS);
             fputs("\n", file);
         }
@@ -138,15 +138,13 @@ void gen_code(Arbol *ast, FILE *file, Tipo_Info context)
             fputs(", ", file);
             gen_code(ast->der, file, SENTENCIAS);
             fputs("\n", file);
-            fputs("SETNE bl\n", file);
-            fputs("OR al, bl\n", file);
-            fputs("MOVZX eax, al\n", file);
+            fputs("SETNE bl \nOR al, bl \nMOVZX eax, al\n", file);
         }
         else if (strcmp(op, "==") == 0)
         {
             fputs("CMP ", file);
             gen_code(ast->izq, file, SENTENCIAS);
-            fputs(" ", file);
+            fputs(", ", file);
             gen_code(ast->der, file, SENTENCIAS);
             fputs("\nSETZ al \nMOVZX eax, al\nMOV z, eax\n", file);
             
@@ -158,8 +156,7 @@ void gen_code(Arbol *ast, FILE *file, Tipo_Info context)
             fputs(", ", file);
             gen_code(ast->izq, file, SENTENCIAS);
             fputs("\n", file);
-            fputs("SETZ al\n", file);
-            fputs("MOVZX eax, al\n", file);
+            fputs("SETZ al \nMOVZX eax, al\n", file);
         }
         break;
     default:

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "tabla_simbolos/tabla_simbolos.h"
+#include "errores.h"
+#include "semantico.h"
 #include "parser.tab.h"
 extern FILE *yyin;
 
@@ -225,6 +227,7 @@ int main(int argc, char **argv)
 
     Simbolo *tabla = crearTabla();
     analisisSemantico(arbol, tabla);
+    mostrarErrores();
 
     interprete(arbol);
 

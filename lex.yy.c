@@ -392,7 +392,7 @@ static const flex_int16_t yy_accept[56] =
 static const YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    4,    1,    1,    1,    1,    5,    1,    6,
         7,    8,    9,    1,    1,    1,    1,   10,   10,   10,
@@ -1932,4 +1932,3 @@ void yyerror(){
 	printf("%s%d\n","-> Error de sintaxis en linea: ", yylineno);
 }     
 */
-

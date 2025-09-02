@@ -1,3 +1,14 @@
-bool main() { 
-    return true == true;
+int main() { 
+    bool za;
+    bool zb;
+    bool zc;
+    int x; 
+    int y;
+    zb = false;
+    y = 2 * 2;
+    x = 2 + 2;
+    x = y;
+    za = true && zb;
+    zc = !za;
+    return x;
 }

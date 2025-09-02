@@ -17,7 +17,7 @@ AND             "&&"
 OR              "\|\|"
 COMP            "=="
 NOT             "!"
-WS              [ \t\n]+
+WS              [ \t\r\n]+
 
 %%
 "main"                              { return MAIN; }

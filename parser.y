@@ -96,7 +96,7 @@ expresion: ID                      {$$ = crear_arbol_id($1, NULL, NULL);}
         | expresion AND expresion  {$$ = crear_arbol_operador("&&", NULL, $1, $3);}
         | expresion OR expresion   {$$ = crear_arbol_operador("||", NULL, $1, $3);}
         | expresion COMP expresion {$$ = crear_arbol_operador("==", NULL, $1, $3);}
-        | NOT expresion            {$$ = crear_arbol_operador("!", NULL, $2, NULL);}
+        | NOT expresion            {$$ = crear_arbol_operador("!", NULL, $2, $2);}
         ;  
 
 %%

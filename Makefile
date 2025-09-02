@@ -5,22 +5,22 @@ YACC = bison -d
 LDFLAGS = -lfl
 
 # Fuentes
-SRC = parser.tab.c lex.yy.c \
-      AST/ast.c \
-      tabla_simbolos/tabla_simbolos.c \
-      utils/helpers.c \
-      interprete.c \
-	  semantico.c \
-	  errores.c
+SRC = parser.tab.c lex.yy.c AST/ast.c tabla_simbolos/tabla_simbolos.c interprete.c
 OBJ = $(SRC:.c=.o)
 
-# Ejecutable
+# Ejecutables
 PROG = programa
 
-all: $(PROG)
+all: $(INTERPRETE) $(GENERADOR) run_gen_code
 
-$(PROG): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $(OBJ) $(LDFLAGS)
+$(INTERPRETE): $(COMMON_OBJ) $(INTERPRETE_OBJ)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+$(GENERADOR): $(COMMON_OBJ) $(GENERADOR_OBJ) 
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+run_gen_code: $(GENERADOR) $(PROGRAMA_SRC)
+	./$(GENERADOR) $(PROGRAMA_SRC) $(GENERADOR_OUT)
 
 parser.tab.c parser.tab.h: parser.y
 	$(YACC) parser.y
@@ -33,4 +33,4 @@ lex.yy.c: lexer.l
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ) parser.tab.c parser.tab.h lex.yy.c $(PROG)
+	rm -f $(COMMON_OBJ) $(INTERPRETE_OBJ) $(GENERADOR_OBJ) parser.tab.c parser.tab.h lex.yy.c $(INTERPRETE) $(GENERADOR) $(GENERADOR_OUT)

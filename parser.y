@@ -40,7 +40,7 @@
 
 %%
 
-programa: TIPO MAIN PA PC CA declaraciones sentencias CC { *destino = crear_arbol_nodo(PROGRAMA, $6, $7); 
+programa: TIPO MAIN PA PC CA declaraciones sentencias CC { *destino = crear_arbol_funcion("main", $1, $6, $7); 
                                                             imprimir_vertical(*destino, "", 1);}
 
 
@@ -56,6 +56,7 @@ declaraciones: /* vacio */              { $$ = NULL; }
 
 d: TIPO ID  { 
                 Arbol* id_arbol = crear_arbol_id($2, NULL, NULL);
+                printf("%d\n", $1);
                 id_arbol->info->id.tipo = $1;
                 $$ = crear_arbol_nodo(DECLARACION, id_arbol, NULL);
                 

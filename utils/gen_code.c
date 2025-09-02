@@ -13,7 +13,7 @@ void gen_code(Arbol *ast, FILE *file, Tipo_Info context)
     char s[128];
     switch (ast->tipo_info)
     {
-    case PROGRAMA:
+    case FUNCION: //Se asume que la unica función que hay es main().
         fputs("section .data\n", file);
         gen_code(ast->izq, file, DECLARACIONES);
         fputs("section .text\nglobal _main\n   _main:\n", file);
@@ -147,7 +147,6 @@ void gen_code(Arbol *ast, FILE *file, Tipo_Info context)
             fputs(", ", file);
             gen_code(ast->der, file, SENTENCIAS);
             fputs("\nSETZ al \nMOVZX eax, al\nMOV z, eax\n", file);
-            
         }
         else if (strcmp(op, "!") == 0)
         {
@@ -158,6 +157,22 @@ void gen_code(Arbol *ast, FILE *file, Tipo_Info context)
             fputs("\n", file);
             fputs("SETZ al \nMOVZX eax, al\n", file);
         }
+        break;
+
+    case RETURN_INFO:
+        switch (ast->izq->tipo_info)
+        {
+        case OPERADOR_INFO:
+            gen_code(ast->izq, file, SENTENCIAS);
+            break;
+
+        default:
+            fputs("MOV eax, ", file);
+            gen_code(ast->izq, file, SENTENCIAS);
+            fputs("\n", file);
+            break;
+        }
+        fputs("ret", file);
         break;
     default:
         break;

@@ -23,13 +23,15 @@ GENERADOR_OUT = assembly.asm
 INTERPRETE = interprete
 GENERADOR = gen_code
 
-all: $(INTERPRETE) $(GENERADOR)
+all: $(INTERPRETE) $(GENERADOR) run_gen_code
 
-$(INTERPRETE): $(COMMON_OBJ) $(INTERPRETE_OBJ) $(GENERADOR) $(PROGRAMA_SRC)
+$(INTERPRETE): $(COMMON_OBJ) $(INTERPRETE_OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-$(GENERADOR): $(COMMON_OBJ) $(GENERADOR_OBJ)
+$(GENERADOR): $(COMMON_OBJ) $(GENERADOR_OBJ) 
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+run_gen_code: $(GENERADOR) $(PROGRAMA_SRC)
 	./$(GENERADOR) $(PROGRAMA_SRC) $(GENERADOR_OUT)
 
 parser.tab.c parser.tab.h: parser.y

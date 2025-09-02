@@ -68,11 +68,13 @@ Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, int linea, int colum, Arbol 
     return arbol;
 }
 
-Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_nodo(Tipo_Info tipo, int linea, int colum, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->info = malloc(sizeof(Info_Union));
     arbol->tipo_info = tipo;
+    arbol->linea = linea;
+    arbol->colum = colum;
     arbol->izq = izq;
     arbol->der = der;
 

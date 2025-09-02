@@ -51,7 +51,7 @@ Arbol *crear_arbol_operador(char *op, void *valor, int linea, int colum, Arbol *
 Arbol *crear_arbol_id(char *id, int linea, int colum, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_literal(void *valor, Tipo tipo, int linea, int colum, Arbol *izq, Arbol *der);
 Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, int linea, int colum, Arbol *izq, Arbol *der);
-Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_nodo(Tipo_Info tipo, int linea, int colum, Arbol *izq, Arbol *der);
 void inorder(Arbol *arbol);
 void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo);
 

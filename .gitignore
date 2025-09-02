@@ -2,6 +2,7 @@ parser.tab.c
 parser.tab.h
 programa
 lex.yy.o
+lex.yy.c
 interprete.o
 parser.tab.o
 tabla_simbolos/tabla_simbolos.o

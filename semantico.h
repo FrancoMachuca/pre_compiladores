@@ -14,6 +14,5 @@ void procesarDeclaracion(Arbol *arbol, Simbolo *tabla);
 void procesarOperador(Arbol *arbol, Simbolo *tabla);
 void procesarFuncion(Arbol *arbol, Simbolo *tabla);
 void procesarReturn(Arbol *arbol, Simbolo *tabla);
-Tipo obtenerTipoNodo(Arbol *nodo);
 
 #endif

@@ -51,7 +51,7 @@ declaraciones: /* vacio */              { $$ = NULL; }
                                             if($1 == NULL) {
                                                 $$ = $2;
                                             } else {
-                                                $$ = crear_arbol_nodo(DECLARACIONES, $1, $2);
+                                                $$ = crear_arbol_nodo(DECLARACIONES, yylineno, yycolumn, $1, $2);
                                             }  
                                         }
              ;
@@ -60,7 +60,7 @@ d: TIPO ID  {
                 Arbol* id_arbol = crear_arbol_id($2, yylineno, yycolumn, NULL, NULL);
                 printf("%d\n", $1);
                 id_arbol->info->id.tipo = $1;
-                $$ = crear_arbol_nodo(DECLARACION, id_arbol, NULL);
+                $$ = crear_arbol_nodo(DECLARACION, yylineno, yycolumn, id_arbol, NULL);
                 
             }                 
  ;
@@ -73,17 +73,17 @@ sentencias: /* vacio */ { $$ = NULL; }
                                     if($1 == NULL) {
                                         $$ = $2;
                                     } else {
-                                        $$ = crear_arbol_nodo(SENTENCIAS, $1, $2);
+                                        $$ = crear_arbol_nodo(SENTENCIAS, yylineno, yycolumn, $1, $2);
                                     }
                                 }
           ;
 
 s: ID EQ expresion  {
                         Arbol* id_arbol = crear_arbol_id($1, yylineno, yycolumn, NULL, NULL);
-                        $$ = crear_arbol_nodo(ASIGNACION, id_arbol, $3);
+                        $$ = crear_arbol_nodo(ASIGNACION, yylineno, yycolumn,id_arbol, $3);
                     }
- | RETURN           {$$ = crear_arbol_nodo(RETURN_INFO, NULL, NULL);}
- | RETURN expresion {$$ = crear_arbol_nodo(RETURN_INFO, $2, NULL);}
+ | RETURN           {$$ = crear_arbol_nodo(RETURN_INFO, yylineno, yycolumn, NULL, NULL);}
+ | RETURN expresion {$$ = crear_arbol_nodo(RETURN_INFO, yylineno, yycolumn, $2, NULL);}
  ;
 
 expresion: ID                      {$$ = crear_arbol_id($1, yylineno, yycolumn, NULL, NULL);}

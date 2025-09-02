@@ -4,7 +4,8 @@
 #define MAX_ERRORES 100
 #define MAX_MSG 100
 
-typedef enum {
+typedef enum
+{
     VAR_NO_DECLARADA,
     VAR_YA_DECLARADA,
     FUN_NO_DECLARADA,
@@ -12,13 +13,14 @@ typedef enum {
     TIPO_INCOMPATIBLE
 } CodigoError;
 
-typedef struct {
+typedef struct
+{
     CodigoError codigo;
     char mensaje[MAX_MSG];
 } Error;
 
 // Funciones
-void reportarError(CodigoError codigo, const char *info);
+void reportarError(CodigoError codigo, const char *info, int linea, int colum);
 void mostrarErrores(void);
 
 #endif

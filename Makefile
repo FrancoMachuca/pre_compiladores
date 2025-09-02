@@ -1,27 +1,15 @@
 CC = gcc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -I./AST -I./tabla_simbolos -I./utils
 LEX = flex
 YACC = bison -d
 LDFLAGS = -lfl
 
-# Fuentes comunes
-COMMON_SRC = parser.tab.c lex.yy.c AST/ast.c tabla_simbolos/tabla_simbolos.c
-COMMON_OBJ = $(COMMON_SRC:.c=.o)
-
-# Archivos específicos
-INTERPRETE_SRC = interprete.c
-GENERADOR_SRC = utils/gen_code.c
-PROGRAMA_SRC = programa.txt
-
-INTERPRETE_OBJ = $(INTERPRETE_SRC:.c=.o)
-GENERADOR_OBJ = $(GENERADOR_SRC:.c=.o)
-
-# Salida del generador
-GENERADOR_OUT = assembly.asm
+# Fuentes
+SRC = parser.tab.c lex.yy.c AST/ast.c tabla_simbolos/tabla_simbolos.c interprete.c
+OBJ = $(SRC:.c=.o)
 
 # Ejecutables
-INTERPRETE = interprete
-GENERADOR = gen_code
+PROG = programa
 
 all: $(INTERPRETE) $(GENERADOR) run_gen_code
 

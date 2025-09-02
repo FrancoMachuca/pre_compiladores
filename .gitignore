@@ -7,9 +7,10 @@ assembly.asm
 lex.yy.c
 utils/gen_code.o
 lex.yy.o
+lex.yy.c
 interprete.o
 parser.tab.o
 tabla_simbolos/tabla.o
-tabla_simbolos/tabla_simbolos.o
 AST/ast.o
+utils/helpers.o
 .vscode

@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "ast.h"
 #include <string.h>
 #include <stdbool.h>
-#include "../tabla_simbolos/tabla_simbolos.h"
+#include "ast.h"
+#include "tabla_simbolos.h"
 
-Arbol *crear_arbol_operador(char *op, void *valor, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_operador(char *op, void *valor, int linea, int colum, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->info = malloc(sizeof(Info_Union));
     arbol->tipo_info = OPERADOR_INFO;
+    arbol->linea = linea;
+    arbol->colum = colum;
     arbol->info->operador.nombre = strdup(op);
     arbol->info->operador.valor = valor;
     arbol->info->operador.tipo = VACIO;
@@ -19,11 +21,13 @@ Arbol *crear_arbol_operador(char *op, void *valor, Arbol *izq, Arbol *der)
     return arbol;
 }
 
-Arbol *crear_arbol_id(char *id, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_id(char *id, int linea, int colum, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->info = malloc(sizeof(Info_Union));
     arbol->tipo_info = ID_INFO;
+    arbol->linea = linea;
+    arbol->colum = colum;
     arbol->info->id.nombre = strdup(id);
     arbol->info->id.valor = NULL;
     arbol->info->id.tipo = VACIO;
@@ -33,11 +37,13 @@ Arbol *crear_arbol_id(char *id, Arbol *izq, Arbol *der)
     return arbol;
 }
 
-Arbol *crear_arbol_literal(void *valor, Tipo tipo, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_literal(void *valor, Tipo tipo, int linea, int colum, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->info = malloc(sizeof(Info_Union));
     arbol->tipo_info = LITERAL_INFO;
+    arbol->linea = linea;
+    arbol->colum = colum;
     arbol->info->literal.valor = valor;
     arbol->info->literal.tipo = tipo;
     arbol->izq = izq;
@@ -46,11 +52,13 @@ Arbol *crear_arbol_literal(void *valor, Tipo tipo, Arbol *izq, Arbol *der)
     return arbol;
 }
 
-Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, int linea, int colum, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->info = malloc(sizeof(Info_Union));
     arbol->tipo_info = FUNCION;
+    arbol->linea = linea;
+    arbol->colum = colum;
     arbol->info->funcion.valor = NULL;
     arbol->info->funcion.nombre = strdup(nombre);
     arbol->info->funcion.tipo = tipo;
@@ -60,11 +68,13 @@ Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, Arbol *izq, Arbol *der)
     return arbol;
 }
 
-Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der)
+Arbol *crear_arbol_nodo(Tipo_Info tipo, int linea, int colum, Arbol *izq, Arbol *der)
 {
     Arbol *arbol = malloc(sizeof(Arbol));
     arbol->info = malloc(sizeof(Info_Union));
     arbol->tipo_info = tipo;
+    arbol->linea = linea;
+    arbol->colum = colum;
     arbol->izq = izq;
     arbol->der = der;
 

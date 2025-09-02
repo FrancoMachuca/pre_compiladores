@@ -1,6 +1,6 @@
 #ifndef AST
 #define AST
-#include "../utils/enums.h"
+#include "enums.h"
 
 typedef struct Info_ID
 {
@@ -41,15 +41,17 @@ typedef struct Arbol
 {
     Info_Union *info;
     Tipo_Info tipo_info;
+    int linea;
+    int colum;
     struct Arbol *izq;
     struct Arbol *der;
 } Arbol;
 
-Arbol *crear_arbol_operador(char *op, void *valor, Arbol *izq, Arbol *der);
-Arbol *crear_arbol_id(char *id, Arbol *izq, Arbol *der);
-Arbol *crear_arbol_literal(void *valor, Tipo tipo, Arbol *izq, Arbol *der);
-Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, Arbol *izq, Arbol *der);
-Arbol *crear_arbol_nodo(Tipo_Info tipo, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_operador(char *op, void *valor, int linea, int colum, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_id(char *id, int linea, int colum, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_literal(void *valor, Tipo tipo, int linea, int colum, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_funcion(char *nombre, Tipo tipo, int linea, int colum, Arbol *izq, Arbol *der);
+Arbol *crear_arbol_nodo(Tipo_Info tipo, int linea, int colum, Arbol *izq, Arbol *der);
 void inorder(Arbol *arbol);
 void imprimir_vertical(Arbol *arbol, char *prefijo, int es_ultimo);
 
